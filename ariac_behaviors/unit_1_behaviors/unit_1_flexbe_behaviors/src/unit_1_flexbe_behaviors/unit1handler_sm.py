@@ -51,7 +51,7 @@ class Unit1HandlerSM(Behavior):
 	def create(self):
 		# x:1019 y:131, x:553 y:383
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.config_name_home = 'kitting_home'
+		_state_machine.userdata.config_name_home = 'kitting_bin_group_a'
 		_state_machine.userdata.move_group = 'kitting_arm'
 		_state_machine.userdata.namespace = '/ariac/kitting/'
 		_state_machine.userdata.action_topic = '/move_group'
