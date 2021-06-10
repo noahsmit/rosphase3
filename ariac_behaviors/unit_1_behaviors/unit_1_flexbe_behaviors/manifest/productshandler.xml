@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="ProductsHandler">
+
+	<executable package_path="unit_1_flexbe_behaviors.productshandler_sm" class="ProductsHandlerSM" />
+	<tagstring></tagstring>
+	<author>Noah</author>
+	<date>Thu Jun 10 2021</date>
+	<description>
+		.
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="Pick" />
+
+	<!-- Available Parameters -->
+
+</behavior>
