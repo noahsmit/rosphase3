@@ -1,10 +1,25 @@
 <?xml version="1.0" ?>
 <tables>
-    <table name = "unit1_table">
-    </table>
-    <table name = "andere_tabel_voor_unit1">
+    <table name = "bin_configuration">
+	    <bin name="bin1">
+		    <robot_config value="kitting_bin_group_a" />
+		    <camera_topic value="yyyy" />
+		    <camera_frame value="zzzz" />
+	    </bin>
+	    <bin name="bin2">
+		    <robot_config value="kitting_bin_group_a" />
+		    <camera_topic value="yyyy" />
+		    <camera_frame value="zzzz" />
+	    </bin>
+	    <bin name="bin3">
+		    <robot_config value="kitting_bin_group_b" />
+		    <camera_topic value="yyyy" />
+		    <camera_frame value="zzzz" />
+	    </bin>
+	    <bin name="bin4">
+		    <robot_config value="kitting_bin_group_b" />
+		    <camera_topic value="/ariac/logical_camera_1" />
+		    <camera_frame value="logical_camera_1_frame" />
+	    </bin>
     </table>
 </tables>
-
-
-inshallah
