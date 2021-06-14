@@ -1,7 +1,33 @@
 <?xml version="1.0" ?>
 <tables>
-    <table name = "unit2_table">
+    <table name = "bins">
+	    <bin name="bin1">
+		    <robot_config value="kitting_bin_group_a" />
+		    <camera_topic value="/ariac/logical_camera_bina" />
+		    <camera_frame value="logical_camera_bina_frame" />
+	    </bin>
+	    <bin name="bin2">
+		    <robot_config value="kitting_bin_group_a" />
+		    <camera_topic value="/ariac/logical_camera_bina" />
+		    <camera_frame value="logical_camera_bina_frame" />
+	    </bin>
+	    <bin name="bin3">
+		    <robot_config value="kitting_bin_group_b" />
+		    <camera_topic value="/ariac/logical_camera_binb" />
+		    <camera_frame value="logical_camera_binb_frame" />
+	    </bin>	
+	    <bin name="bin4">
+		    <robot_config value="kitting_bin_group_b" />
+		    <camera_topic value="/ariac/logical_camera_binb" />
+		    <camera_frame value="logical_camera_binb_frame" />
+	    </bin>
     </table>
-    <table name = "andere_tabel_voor_unit2">
+    <table name = "parts">
+	    <part name="assembly_battery_blue">
+		    <offset value="0.05" />
+	    </part>
     </table>
+
+    <table name = "agvs">
+	
 </tables>
