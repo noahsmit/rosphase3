@@ -24,7 +24,13 @@
     </table>
     <table name = "parts">
 	    <part name="assembly_battery_blue">
-		    <offset value="0.0535" />
+		    <offset value="0.045" />
+	    </part>
+	    <part name="assembly_regulator_red">
+		    <offset value="0.051" />
+	    </part>
+	    <part name="assembly_sensor_blue">
+		    <offset value="0.04" />
 	    </part>
     </table>
     <table name = "agvs">

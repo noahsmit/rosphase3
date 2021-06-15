@@ -58,6 +58,7 @@ class ProductsHandlerSM(Behavior):
 		_state_machine.userdata.shipment_type = ''
 		_state_machine.userdata.index = 0
 		_state_machine.userdata.ONE = 1
+		_state_machine.userdata.MINUSONE = -1
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -78,7 +79,14 @@ class ProductsHandlerSM(Behavior):
 										AddNumericState(),
 										transitions={'done': 'GetPartFromProducts'},
 										autonomy={'done': Autonomy.Off},
-										remapping={'value_a': 'index', 'value_b': 'ONE', 'result': 'result'})
+										remapping={'value_a': 'index', 'value_b': 'ONE', 'result': 'index'})
+
+			# x:615 y:249
+			OperatableStateMachine.add('NumberOfProducts - 1',
+										AddNumericState(),
+										transitions={'done': 'CheckEqual'},
+										autonomy={'done': Autonomy.Off},
+										remapping={'value_a': 'number_of_products', 'value_b': 'MINUSONE', 'result': 'result'})
 
 			# x:626 y:46
 			OperatableStateMachine.add('Pick',
@@ -90,16 +98,16 @@ class ProductsHandlerSM(Behavior):
 			# x:626 y:138
 			OperatableStateMachine.add('Place',
 										self.use_behavior(PlaceSM, 'Place'),
-										transitions={'finished': 'CheckEqual', 'failed': 'failed'},
+										transitions={'finished': 'NumberOfProducts - 1', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'agv_id': 'agv_id', 'offset_pose': 'pose'})
 
-			# x:661 y:250
+			# x:589 y:373
 			OperatableStateMachine.add('CheckEqual',
 										EqualState(),
 										transitions={'true': 'finished', 'false': 'IncreasePI'},
 										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
-										remapping={'value_a': 'number_of_products', 'value_b': 'index'})
+										remapping={'value_a': 'result', 'value_b': 'index'})
 
 
 		return _state_machine
