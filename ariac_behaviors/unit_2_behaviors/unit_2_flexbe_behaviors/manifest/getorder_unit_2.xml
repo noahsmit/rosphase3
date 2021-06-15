@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="GetOrder_unit_2">
+
+	<executable package_path="unit_2_flexbe_behaviors.getorder_unit_2_sm" class="GetOrder_unit_2SM" />
+	<tagstring>unit 2</tagstring>
+	<author>Eric Bolier</author>
+	<date>Thu Jun 10 2021</date>
+	<description>
+		Gets order for the unit 2 module
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

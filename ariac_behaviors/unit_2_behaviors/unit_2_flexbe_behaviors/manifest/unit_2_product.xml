@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="unit_2_product">
+
+	<executable package_path="unit_2_flexbe_behaviors.unit_2_product_sm" class="unit_2_productSM" />
+	<tagstring>2</tagstring>
+	<author>Eric Bolier</author>
+	<date>Mon Jun 14 2021</date>
+	<description>
+		processes the product
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="pick_part_unit_2" />
+
+	<!-- Available Parameters -->
+
+</behavior>

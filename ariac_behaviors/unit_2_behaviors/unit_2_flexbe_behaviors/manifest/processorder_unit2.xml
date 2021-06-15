@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="ProcessOrder_unit2">
+
+	<executable package_path="unit_2_flexbe_behaviors.processorder_unit2_sm" class="ProcessOrder_unit2SM" />
+	<tagstring></tagstring>
+	<author>Eric Bolier</author>
+	<date>Thu Jun 10 2021</date>
+	<description>
+		Process the order from the unit 2 module
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="unit_2_product" />
+
+	<!-- Available Parameters -->
+
+</behavior>

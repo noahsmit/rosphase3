@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Unit2 Test Positions">
+
+	<executable package_path="unit_2_flexbe_behaviors.unit2_test_positions_sm" class="Unit2TestPositionsSM" />
+	<tagstring></tagstring>
+	<author>Eric Bolier</author>
+	<date>Thu Jun 10 2021</date>
+	<description>
+		tests the positions of the robot arm for the 2nd unit
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
