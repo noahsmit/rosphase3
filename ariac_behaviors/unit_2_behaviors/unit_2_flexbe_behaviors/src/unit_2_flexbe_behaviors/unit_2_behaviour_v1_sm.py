@@ -65,27 +65,27 @@ class unit_2_behaviour_v1SM(Behavior):
 
 
 		with _state_machine:
-			# x:80 y:50
+			# x:110 y:71
 			OperatableStateMachine.add('Initialise_behaviour_unit_2',
 										self.use_behavior(Initialise_behaviour_unit_2SM, 'Initialise_behaviour_unit_2'),
 										transitions={'finished': 'InitialiseSucces', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:625 y:17
+			# x:623 y:74
 			OperatableStateMachine.add('GetOrder',
 										GetOrderState(),
 										transitions={'order_found': 'ProcessOrder_unit2', 'no_order_found': 'failed'},
 										autonomy={'order_found': Autonomy.Off, 'no_order_found': Autonomy.Off},
 										remapping={'order_id': 'order_id', 'kitting_shipments': 'kitting_shipments', 'number_of_kitting_shipments': 'number_of_kitting_shipments', 'assembly_shipments': 'assembly_shipments', 'number_of_assembly_shipments': 'number_of_assembly_shipments'})
 
-			# x:388 y:29
+			# x:393 y:74
 			OperatableStateMachine.add('InitialiseSucces',
 										MessageState(),
 										transitions={'continue': 'GetOrder'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'message_1'})
 
-			# x:1032 y:31
+			# x:970 y:71
 			OperatableStateMachine.add('ProcessOrder_unit2',
 										self.use_behavior(ProcessOrder_unit2SM, 'ProcessOrder_unit2'),
 										transitions={'finished': 'End', 'failed': 'failed'},
@@ -98,7 +98,7 @@ class unit_2_behaviour_v1SM(Behavior):
 										transitions={'finished': 'Unit2 Test Positions', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:1346 y:38
+			# x:1343 y:74
 			OperatableStateMachine.add('End',
 										EndAssignment(),
 										transitions={'continue': 'finished'},

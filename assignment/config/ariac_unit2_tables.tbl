@@ -26,36 +26,45 @@
     <table name = "stations">
 	    <station name="as1">
 		    <robot_config value="gantry_station_1" />
+		    <pick value="pick1" />
 		    <camera_topic value="/ariac/logical_camera_station1" />
 		    <camera_frame value="logical_camera_station1_frame" />
+		    <robot_group value="gantry_station_group_A" />
 	    </station>
 	    <station name="as2">
 		    <robot_config value="gantry_station_2" />
+		    <pick value="pick2" />
 		    <camera_topic value="/ariac/logical_camera_station2" />
 		    <camera_frame value="logical_camera_station2_frame" />
+		    <robot_group value="gantry_station_group_B" />
 	    </station>
 	    <station name="as3">
 		    <robot_config value="gantry_station_3" />
+		    <pick value="pick3" />
 		    <camera_topic value="/ariac/logical_camera_station3" />
 		    <camera_frame value="logical_camera_station3_frame" />
+		    <robot_group value="gantry_station_group_A" />
 	    </station>	
 	    <station name="as4">
 		    <robot_config value="gantry_station_4" />
+		    <pick value="pick4" />
 		    <camera_topic value="/ariac/logical_camera_station4" />
 		    <camera_frame value="logical_camera_station4_frame" />
+		    <robot_group value="gantry_station_group_B" />
 	    </station>
     </table>
 
-    <table name = "stationgroup">
-	    <stationgroup name="stationgroupA">
-		    <robot_config value="gantry_station_group_A" />
-	    </stationgroup>
-	    <stationgroup name="stationgroupB">
-		    <robot_config value="gantry_station_group_B" />
-	    </stationgroup>
-    </table>
     <table name = "parts">
-	    <part name="assembly_battery_blue">
+	    <part name="assembly_battery_green">
+		    <offset value="0.045" />
+	    </part>
+	    <part name="assembly_regulator_red">
+		    <offset value="0.051" />
+	    </part>
+	    <part name="assembly_sensor_blue">
+		    <offset value="0.04" />
+	    </part>
+	    <part name="assembly_pump_blue">
 		    <offset value="0.05" />
 	    </part>
     </table>

@@ -13,6 +13,7 @@
 
 	<!-- Contained Behaviors -->
 	<contains name="unit_2_product" />
+	<contains name="GantryToStation" />
 
 	<!-- Available Parameters -->
 

@@ -10,6 +10,7 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from ariac_flexbe_states.message_state import MessageState
 from ariac_logistics_flexbe_states.get_assembly_shipment_from_order_state import GetAssemblyShipmentFromOrderState
+from unit_2_flexbe_behaviors.gantrytostation_sm import GantryToStationSM
 from unit_2_flexbe_behaviors.unit_2_product_sm import unit_2_productSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
@@ -34,6 +35,7 @@ class ProcessOrder_unit2SM(Behavior):
 		# parameters of this behavior
 
 		# references to used behaviors
+		self.add_behavior(GantryToStationSM, 'GantryToStation')
 		self.add_behavior(unit_2_productSM, 'unit_2_product')
 
 		# Additional initialization code can be added inside the following tags
@@ -47,7 +49,7 @@ class ProcessOrder_unit2SM(Behavior):
 
 	def create(self):
 		table = 'ariac_unit2_tables'
-		# x:901 y:263, x:309 y:379
+		# x:924 y:311, x:309 y:379
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['number_of_assembly_shipments', 'assembly_shipments'])
 		_state_machine.userdata.message_1 = 'MSG: assembly_index recieved'
 		_state_machine.userdata.agv_id = ''
@@ -69,26 +71,26 @@ class ProcessOrder_unit2SM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'invalid_index': Autonomy.Off},
 										remapping={'assembly_shipments': 'assembly_shipments', 'assembly_index': 'assembly_index', 'shipment_type': 'shipment_type', 'products': 'products', 'shipment_type': 'shipment_type', 'station_id': 'station_id', 'number_of_products': 'number_of_products'})
 
-			# x:379 y:23
+			# x:393 y:24
 			OperatableStateMachine.add('msg1',
 										MessageState(),
-										transitions={'continue': 'msg2'},
+										transitions={'continue': 'GantryToStation'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'message_1'})
 
-			# x:599 y:20
-			OperatableStateMachine.add('msg2',
-										MessageState(),
-										transitions={'continue': 'unit_2_product'},
-										autonomy={'continue': Autonomy.Off},
-										remapping={'message': 'station_id'})
-
-			# x:801 y:30
+			# x:820 y:21
 			OperatableStateMachine.add('unit_2_product',
 										self.use_behavior(unit_2_productSM, 'unit_2_product'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'number_of_products': 'number_of_products', 'shipment_type': 'shipment_type', 'products': 'products', 'station_id': 'station_id'})
+
+			# x:550 y:21
+			OperatableStateMachine.add('GantryToStation',
+										self.use_behavior(GantryToStationSM, 'GantryToStation'),
+										transitions={'finished': 'unit_2_product', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
+										remapping={'station_id': 'station_id'})
 
 
 		return _state_machine
