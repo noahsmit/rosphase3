@@ -24,7 +24,25 @@
     </table>
     <table name = "parts">
 	    <part name="assembly_battery_blue">
-		    <offset value="0.05" />
+		    <offset value="0.0535" />
 	    </part>
+    </table>
+    <table name = "agvs">
+	    <agv name="agv1">
+		    <tray value="kit_tray_1" />
+		    <config value="kitting_agv_1" />
+	    </agv>
+	    <agv name="agv2">
+		    <tray value="kit_tray_2" />
+		    <config value="kitting_agv_2" />
+	    </agv>
+	    <agv name="agv3">
+		    <tray value="kit_tray_3" />
+		    <config value="kitting_agv_3" />
+	    </agv>
+	    <agv name="agv4">
+		    <tray value="kit_tray_4" />
+		    <config value="kitting_agv_4" />
+	    </agv>
     </table>
 </tables>

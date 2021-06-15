@@ -12,6 +12,7 @@ from ariac_logistics_flexbe_states.get_part_from_products_state import GetPartFr
 from ariac_support_flexbe_states.add_numeric_state import AddNumericState
 from ariac_support_flexbe_states.equal_state import EqualState
 from unit_1_flexbe_behaviors.pick_sm import PickSM
+from unit_1_flexbe_behaviors.place_sm import PlaceSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -36,6 +37,7 @@ class ProductsHandlerSM(Behavior):
 
 		# references to used behaviors
 		self.add_behavior(PickSM, 'Pick')
+		self.add_behavior(PlaceSM, 'Place')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -81,11 +83,18 @@ class ProductsHandlerSM(Behavior):
 			# x:626 y:46
 			OperatableStateMachine.add('Pick',
 										self.use_behavior(PickSM, 'Pick'),
-										transitions={'finished': 'CheckEqual', 'failed': 'failed'},
+										transitions={'finished': 'Place', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'part': 'part', 'pose': 'pose', 'agv_id': 'agv_id'})
 
-			# x:695 y:207
+			# x:626 y:138
+			OperatableStateMachine.add('Place',
+										self.use_behavior(PlaceSM, 'Place'),
+										transitions={'finished': 'CheckEqual', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
+										remapping={'agv_id': 'agv_id', 'offset_pose': 'pose'})
+
+			# x:661 y:250
 			OperatableStateMachine.add('CheckEqual',
 										EqualState(),
 										transitions={'true': 'finished', 'false': 'IncreasePI'},

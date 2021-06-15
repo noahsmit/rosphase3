@@ -10,12 +10,14 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from ariac_flexbe_states.compute_grasp_ariac_state import ComputeGraspAriacState
 from ariac_flexbe_states.detect_part_camera_ariac_state import DetectPartCameraAriacState
+from ariac_flexbe_states.get_gripper_status_state import GetGripperStatusState
 from ariac_flexbe_states.lookup_from_table import LookupFromTableState
 from ariac_flexbe_states.message_state import MessageState
 from ariac_flexbe_states.moveit_to_joints_dyn_ariac_state import MoveitToJointsDynAriacState
 from ariac_flexbe_states.srdf_state_to_moveit_ariac_state import SrdfStateToMoveitAriac
 from ariac_flexbe_states.vacuum_gripper_control_state import VacuumGripperControlState
 from ariac_logistics_flexbe_states.get_material_locations import GetMaterialLocationsState
+from ariac_support_flexbe_states.equal_state import EqualState
 from ariac_support_flexbe_states.get_item_from_list_state import GetItemFromListState
 from ariac_support_flexbe_states.text_to_float_state import TextToFloatState
 from flexbe_states.wait_state import WaitState
@@ -54,7 +56,7 @@ class PickSM(Behavior):
 
 	def create(self):
 		table = 'ariac_unit1_tables'
-		# x:563 y:248, x:547 y:195
+		# x:13 y:337, x:547 y:195
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['part', 'pose', 'agv_id'])
 		_state_machine.userdata.location_type = ''
 		_state_machine.userdata.part = ''
@@ -68,6 +70,7 @@ class PickSM(Behavior):
 		_state_machine.userdata.ref_frame = 'linear_arm_actuator'
 		_state_machine.userdata.tool_link = 'ee_link'
 		_state_machine.userdata.rotation = 0
+		_state_machine.userdata.TRUE = True
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -83,12 +86,26 @@ class PickSM(Behavior):
 										autonomy={'continue': Autonomy.Off},
 										remapping={'part': 'part', 'location_type': 'location_type', 'material_locations': 'material_locations'})
 
+			# x:1029 y:424
+			OperatableStateMachine.add('ComputePartPosition',
+										ComputeGraspAriacState(joint_names=['linear_arm_actuator_joint', 'shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint', 'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']),
+										transitions={'continue': 'GripperOn', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'move_group': 'move_group', 'namespace': 'namespace', 'tool_link': 'tool_link', 'pose': 'pose', 'offset': 'offset', 'rotation': 'rotation', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
+
 			# x:1022 y:224
 			OperatableStateMachine.add('DetectPart',
 										DetectPartCameraAriacState(time_out=0.5),
 										transitions={'continue': 'MessagePose', 'failed': 'failed', 'not_found': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'ref_frame': 'ref_frame', 'camera_topic': 'camera_topic', 'camera_frame': 'camera_frame', 'part': 'part', 'pose': 'pose'})
+
+			# x:692 y:575
+			OperatableStateMachine.add('GetGripperState',
+										GetGripperStatusState(topic_name='/ariac/kitting/arm/gripper/control'),
+										transitions={'continue': 'CheckAttached', 'fail': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'fail': Autonomy.Off},
+										remapping={'enabled': 'enabled', 'attached': 'attached'})
 
 			# x:88 y:168
 			OperatableStateMachine.add('GetItemFromList',
@@ -97,7 +114,7 @@ class PickSM(Behavior):
 										autonomy={'done': Autonomy.Off, 'invalid_index': Autonomy.Off},
 										remapping={'list': 'material_locations', 'index': 'index', 'item': 'bin'})
 
-			# x:824 y:424
+			# x:1011 y:516
 			OperatableStateMachine.add('GripperOn',
 										VacuumGripperControlState(enable=True, service_name='/ariac/kitting/arm/gripper/control'),
 										transitions={'continue': 'MoveToPart', 'failed': 'failed'},
@@ -145,17 +162,17 @@ class PickSM(Behavior):
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'pose'})
 
-			# x:280 y:394
+			# x:102 y:554
 			OperatableStateMachine.add('MoveBack',
 										SrdfStateToMoveitAriac(),
 										transitions={'reached': 'finished', 'planning_failed': 'failed', 'control_failed': 'failed', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'position', 'move_group': 'move_group', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:621 y:424
+			# x:1021 y:597
 			OperatableStateMachine.add('MoveToPart',
 										MoveitToJointsDynAriacState(),
-										transitions={'reached': 'Wait', 'planning_failed': 'failed', 'control_failed': 'failed'},
+										transitions={'reached': 'GetGripperState', 'planning_failed': 'failed', 'control_failed': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off},
 										remapping={'namespace': 'namespace', 'move_group': 'move_group', 'action_topic': 'action_topic', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
@@ -173,7 +190,7 @@ class PickSM(Behavior):
 										autonomy={'done': Autonomy.Off},
 										remapping={'text_value': 'offset_text', 'float_value': 'offset'})
 
-			# x:458 y:411
+			# x:334 y:544
 			OperatableStateMachine.add('Wait',
 										WaitState(wait_time=0.5),
 										transitions={'done': 'MoveBack'},
@@ -185,12 +202,12 @@ class PickSM(Behavior):
 										transitions={'done': 'MoveToPosition'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:1029 y:424
-			OperatableStateMachine.add('ComputePartPosition',
-										ComputeGraspAriacState(joint_names=['linear_arm_actuator_joint', 'shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint', 'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']),
-										transitions={'continue': 'GripperOn', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'move_group': 'move_group', 'namespace': 'namespace', 'tool_link': 'tool_link', 'pose': 'pose', 'offset': 'offset', 'rotation': 'rotation', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
+			# x:482 y:459
+			OperatableStateMachine.add('CheckAttached',
+										EqualState(),
+										transitions={'true': 'Wait', 'false': 'MoveToPosition'},
+										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
+										remapping={'value_a': 'attached', 'value_b': 'TRUE'})
 
 
 		return _state_machine
