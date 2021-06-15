@@ -22,12 +22,42 @@
 		    <camera_frame value="logical_camera_binb_frame" />
 	    </bin>
     </table>
+
+    <table name = "stations">
+	    <station name="as1">
+		    <robot_config value="gantry_station_1" />
+		    <camera_topic value="/ariac/logical_camera_station1" />
+		    <camera_frame value="logical_camera_station1_frame" />
+	    </station>
+	    <station name="as2">
+		    <robot_config value="gantry_station_2" />
+		    <camera_topic value="/ariac/logical_camera_station2" />
+		    <camera_frame value="logical_camera_station2_frame" />
+	    </station>
+	    <station name="as3">
+		    <robot_config value="gantry_station_3" />
+		    <camera_topic value="/ariac/logical_camera_station3" />
+		    <camera_frame value="logical_camera_station3_frame" />
+	    </station>	
+	    <station name="as4">
+		    <robot_config value="gantry_station_4" />
+		    <camera_topic value="/ariac/logical_camera_station4" />
+		    <camera_frame value="logical_camera_station4_frame" />
+	    </station>
+    </table>
+
+    <table name = "stationgroup">
+	    <stationgroup name="stationgroupA">
+		    <robot_config value="gantry_station_group_A" />
+	    </stationgroup>
+	    <stationgroup name="stationgroupB">
+		    <robot_config value="gantry_station_group_B" />
+	    </stationgroup>
+    </table>
     <table name = "parts">
 	    <part name="assembly_battery_blue">
 		    <offset value="0.05" />
 	    </part>
     </table>
-
-    <table name = "agvs">
 	
 </tables>
