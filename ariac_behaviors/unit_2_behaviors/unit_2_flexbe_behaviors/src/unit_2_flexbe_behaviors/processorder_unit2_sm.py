@@ -76,7 +76,7 @@ class ProcessOrder_unit2SM(Behavior):
 										MessageState(),
 										transitions={'continue': 'GantryToStation'},
 										autonomy={'continue': Autonomy.Off},
-										remapping={'message': 'message_1'})
+										remapping={'message': 'products'})
 
 			# x:820 y:21
 			OperatableStateMachine.add('unit_2_product',

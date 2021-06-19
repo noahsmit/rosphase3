@@ -30,6 +30,7 @@
 		    <camera_topic value="/ariac/logical_camera_station1" />
 		    <camera_frame value="logical_camera_station1_frame" />
 		    <robot_group value="gantry_station_group_A" />
+		    <frame value="briefcase_1" />
 	    </station>
 	    <station name="as2">
 		    <robot_config value="gantry_station_2" />
@@ -37,6 +38,7 @@
 		    <camera_topic value="/ariac/logical_camera_station2" />
 		    <camera_frame value="logical_camera_station2_frame" />
 		    <robot_group value="gantry_station_group_B" />
+		    <frame value="briefcase_2" />
 	    </station>
 	    <station name="as3">
 		    <robot_config value="gantry_station_3" />
@@ -44,6 +46,7 @@
 		    <camera_topic value="/ariac/logical_camera_station3" />
 		    <camera_frame value="logical_camera_station3_frame" />
 		    <robot_group value="gantry_station_group_A" />
+		    <frame value="briefcase_3" />
 	    </station>	
 	    <station name="as4">
 		    <robot_config value="gantry_station_4" />
@@ -51,12 +54,13 @@
 		    <camera_topic value="/ariac/logical_camera_station4" />
 		    <camera_frame value="logical_camera_station4_frame" />
 		    <robot_group value="gantry_station_group_B" />
+		    <frame value="briefcase_4" />
 	    </station>
     </table>
 
     <table name = "parts">
 	    <part name="assembly_battery_green">
-		    <offset value="0.045" />
+		    <offset value="0.04" />
 	    </part>
 	    <part name="assembly_regulator_red">
 		    <offset value="0.051" />

@@ -52,7 +52,7 @@ class pick_part_unit_2SM(Behavior):
 
 	def create(self):
 		table = 'ariac_unit2_tables'
-		# x:1007 y:671, x:583 y:240
+		# x:191 y:483, x:583 y:240
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['part', 'station_id'])
 		_state_machine.userdata.part = ''
 		_state_machine.userdata.location_type = ''
@@ -77,24 +77,31 @@ class pick_part_unit_2SM(Behavior):
 
 
 		with _state_machine:
-			# x:172 y:38
+			# x:76 y:174
 			OperatableStateMachine.add('LookUpCameraFrame',
 										LookupFromTableState(parameter_name=table, table_name='stations', index_title='station', column_title='camera_frame'),
-										transitions={'found': 'LookUpCameraTopic', 'not_found': 'failed'},
+										transitions={'found': 'MessageCF', 'not_found': 'failed'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'station_id', 'column_value': 'camera_frame'})
+
+			# x:1092 y:378
+			OperatableStateMachine.add('ComputeMSG',
+										MessageState(),
+										transitions={'continue': 'ActivateGripper'},
+										autonomy={'continue': Autonomy.Off},
+										remapping={'message': 'joint_values'})
 
 			# x:929 y:329
 			OperatableStateMachine.add('ComputePos',
 										ComputeGraspAriacState(joint_names=['gantry_arm_elbow_joint', 'gantry_arm_shoulder_lift_joint', 'gantry_arm_shoulder_pan_joint', 'gantry_arm_wrist_1_joint', 'gantry_arm_wrist_2_joint', 'gantry_arm_wrist_3_joint']),
-										transitions={'continue': 'ActivateGripper', 'failed': 'failed'},
+										transitions={'continue': 'ComputeMSG', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'move_group': 'move_group_arm', 'namespace': 'namespace', 'tool_link': 'tool_link', 'pose': 'pose', 'offset': 'offset', 'rotation': 'rotation', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
 			# x:1025 y:55
 			OperatableStateMachine.add('DetectPart',
 										DetectPartCameraAriacState(time_out=0.5),
-										transitions={'continue': 'MoveToPick', 'failed': 'failed', 'not_found': 'failed'},
+										transitions={'continue': 'PoseMSG', 'failed': 'failed', 'not_found': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'ref_frame': 'ref_frame', 'camera_topic': 'camera_topic', 'camera_frame': 'camera_frame', 'part': 'part', 'pose': 'pose'})
 
@@ -105,10 +112,10 @@ class pick_part_unit_2SM(Behavior):
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'part', 'column_value': 'offset_text'})
 
-			# x:339 y:33
+			# x:318 y:21
 			OperatableStateMachine.add('LookUpCameraTopic',
 										LookupFromTableState(parameter_name=table, table_name='stations', index_title='station', column_title='camera_topic'),
-										transitions={'found': 'GetOffset', 'not_found': 'LookUpCameraTopic'},
+										transitions={'found': 'MsgCT', 'not_found': 'failed'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'station_id', 'column_value': 'camera_topic'})
 
@@ -119,12 +126,26 @@ class pick_part_unit_2SM(Behavior):
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'station_id', 'column_value': 'pick'})
 
+			# x:93 y:50
+			OperatableStateMachine.add('MessageCF',
+										MessageState(),
+										transitions={'continue': 'LookUpCameraTopic'},
+										autonomy={'continue': Autonomy.Off},
+										remapping={'message': 'camera_frame'})
+
+			# x:655 y:546
+			OperatableStateMachine.add('MoveBack',
+										SrdfStateToMoveitAriac(),
+										transitions={'reached': 'finished', 'planning_failed': 'failed', 'control_failed': 'failed', 'param_error': 'failed'},
+										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
+										remapping={'config_name': 'pick', 'move_group': 'move_group', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
+
 			# x:942 y:530
 			OperatableStateMachine.add('MoveToPart',
 										MoveitToJointsDynAriacState(),
-										transitions={'reached': 'finished', 'planning_failed': 'WaitRetry', 'control_failed': 'WaitRetry'},
+										transitions={'reached': 'MoveBack', 'planning_failed': 'WaitRetry', 'control_failed': 'WaitRetry'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off},
-										remapping={'namespace': 'namespace', 'move_group': 'move_group', 'action_topic': 'action_topic', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
+										remapping={'namespace': 'namespace', 'move_group': 'move_group_arm', 'action_topic': 'action_topic', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
 			# x:939 y:247
 			OperatableStateMachine.add('MoveToPick',
@@ -133,10 +154,17 @@ class pick_part_unit_2SM(Behavior):
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'pick', 'move_group': 'move_group', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
+			# x:329 y:112
+			OperatableStateMachine.add('MsgCT',
+										MessageState(),
+										transitions={'continue': 'GetOffset'},
+										autonomy={'continue': Autonomy.Off},
+										remapping={'message': 'camera_topic'})
+
 			# x:1133 y:150
 			OperatableStateMachine.add('PoseMSG',
 										MessageState(),
-										transitions={'continue': 'PoseMSG'},
+										transitions={'continue': 'MoveToPick'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'pose'})
 
@@ -147,7 +175,7 @@ class pick_part_unit_2SM(Behavior):
 										autonomy={'done': Autonomy.Off},
 										remapping={'text_value': 'offset_text', 'float_value': 'offset'})
 
-			# x:620 y:363
+			# x:720 y:395
 			OperatableStateMachine.add('WaitRetry',
 										WaitState(wait_time=0.5),
 										transitions={'done': 'MoveToPart'},

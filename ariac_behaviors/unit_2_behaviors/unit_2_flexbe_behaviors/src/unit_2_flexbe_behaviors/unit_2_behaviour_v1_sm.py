@@ -74,7 +74,7 @@ class unit_2_behaviour_v1SM(Behavior):
 			# x:623 y:74
 			OperatableStateMachine.add('GetOrder',
 										GetOrderState(),
-										transitions={'order_found': 'ProcessOrder_unit2', 'no_order_found': 'failed'},
+										transitions={'order_found': 'MessageAssemblyShipments', 'no_order_found': 'failed'},
 										autonomy={'order_found': Autonomy.Off, 'no_order_found': Autonomy.Off},
 										remapping={'order_id': 'order_id', 'kitting_shipments': 'kitting_shipments', 'number_of_kitting_shipments': 'number_of_kitting_shipments', 'assembly_shipments': 'assembly_shipments', 'number_of_assembly_shipments': 'number_of_assembly_shipments'})
 
@@ -84,6 +84,13 @@ class unit_2_behaviour_v1SM(Behavior):
 										transitions={'continue': 'GetOrder'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'message_1'})
+
+			# x:797 y:64
+			OperatableStateMachine.add('MessageAssemblyShipments',
+										MessageState(),
+										transitions={'continue': 'ProcessOrder_unit2'},
+										autonomy={'continue': Autonomy.Off},
+										remapping={'message': 'assembly_shipments'})
 
 			# x:970 y:71
 			OperatableStateMachine.add('ProcessOrder_unit2',
