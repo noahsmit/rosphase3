@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="GantryToStation">
+
+	<executable package_path="unit_2_flexbe_behaviors.gantrytostation_sm" class="GantryToStationSM" />
+	<tagstring></tagstring>
+	<author>Eric</author>
+	<date>Tue Jun 15 2021</date>
+	<description>
+		.
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
