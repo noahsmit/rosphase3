@@ -9,8 +9,6 @@
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from ariac_logistics_flexbe_states.get_part_from_products_state import GetPartFromProductsState
-from ariac_support_flexbe_states.add_numeric_state import AddNumericState
-from ariac_support_flexbe_states.equal_state import EqualState
 from unit_1_flexbe_behaviors.pick_sm import PickSM
 from unit_1_flexbe_behaviors.place_sm import PlaceSM
 # Additional imports can be added inside the following tags
@@ -50,7 +48,7 @@ class ProductsHandlerSM(Behavior):
 
 	def create(self):
 		# x:783 y:386, x:130 y:365
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['shipment_type', 'products', 'agv_id', 'number_of_products'])
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['shipment_type', 'products', 'agv_id', 'number_of_products', 'index'])
 		_state_machine.userdata.products = []
 		_state_machine.userdata.agv_id = ''
 		_state_machine.userdata.station_id = ''
@@ -74,20 +72,6 @@ class ProductsHandlerSM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'invalid_index': Autonomy.Off},
 										remapping={'products': 'products', 'index': 'index', 'type': 'part', 'pose': 'pose'})
 
-			# x:328 y:258
-			OperatableStateMachine.add('IncreasePI',
-										AddNumericState(),
-										transitions={'done': 'GetPartFromProducts'},
-										autonomy={'done': Autonomy.Off},
-										remapping={'value_a': 'index', 'value_b': 'ONE', 'result': 'index'})
-
-			# x:615 y:249
-			OperatableStateMachine.add('NumberOfProducts - 1',
-										AddNumericState(),
-										transitions={'done': 'CheckEqual'},
-										autonomy={'done': Autonomy.Off},
-										remapping={'value_a': 'number_of_products', 'value_b': 'MINUSONE', 'result': 'result'})
-
 			# x:626 y:46
 			OperatableStateMachine.add('Pick',
 										self.use_behavior(PickSM, 'Pick'),
@@ -98,16 +82,9 @@ class ProductsHandlerSM(Behavior):
 			# x:626 y:138
 			OperatableStateMachine.add('Place',
 										self.use_behavior(PlaceSM, 'Place'),
-										transitions={'finished': 'NumberOfProducts - 1', 'failed': 'failed'},
+										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'agv_id': 'agv_id', 'offset_pose': 'pose'})
-
-			# x:589 y:373
-			OperatableStateMachine.add('CheckEqual',
-										EqualState(),
-										transitions={'true': 'finished', 'false': 'IncreasePI'},
-										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
-										remapping={'value_a': 'result', 'value_b': 'index'})
 
 
 		return _state_machine

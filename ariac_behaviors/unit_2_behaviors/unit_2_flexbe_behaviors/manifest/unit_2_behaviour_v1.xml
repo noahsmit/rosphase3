@@ -12,7 +12,6 @@
 
 
 	<!-- Contained Behaviors -->
-	<contains name="Initialise_behaviour_unit_2" />
 	<contains name="ProcessOrder_unit2" />
 	<contains name="Unit2 Test Positions" />
 

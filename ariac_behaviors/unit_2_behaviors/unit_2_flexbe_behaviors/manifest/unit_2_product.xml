@@ -12,9 +12,9 @@
 
 
 	<!-- Contained Behaviors -->
-	<contains name="GantryToStation" />
 	<contains name="pick_part_unit_2" />
 	<contains name="unit2_place" />
+	<contains name="GantryToStation" />
 
 	<!-- Available Parameters -->
 

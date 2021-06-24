@@ -45,7 +45,7 @@ class AGVHandlerSM(Behavior):
 
 
 	def create(self):
-		# x:591 y:421, x:351 y:405
+		# x:617 y:492, x:351 y:405
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['shipment_type', 'agv_id', 'assembly_station_name'])
 		_state_machine.userdata.shipment_type = ''
 		_state_machine.userdata.agv_id = ''
@@ -60,7 +60,7 @@ class AGVHandlerSM(Behavior):
 
 
 		with _state_machine:
-			# x:208 y:82
+			# x:134 y:42
 			OperatableStateMachine.add('NotifyKittingReady',
 										NotifyKittingShipmentState(),
 										transitions={'continue': 'QualityControl', 'fail': 'failed', 'service_timeout': 'failed'},
@@ -74,14 +74,14 @@ class AGVHandlerSM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'fail': Autonomy.Off},
 										remapping={'agv_id': 'agv_id', 'agv_state': 'agv_state'})
 
-			# x:428 y:67
+			# x:399 y:57
 			OperatableStateMachine.add('QualityControl',
 										EqualState(),
 										transitions={'true': 'GetStatus', 'false': 'failed'},
 										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
 										remapping={'value_a': 'success', 'value_b': 'TRUE'})
 
-			# x:658 y:215
+			# x:607 y:217
 			OperatableStateMachine.add('CheckDone',
 										EqualState(),
 										transitions={'true': 'finished', 'false': 'QualityControl'},

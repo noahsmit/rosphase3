@@ -10,8 +10,6 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from ariac_flexbe_states.message_state import MessageState
 from ariac_logistics_flexbe_states.get_part_from_products_state import GetPartFromProductsState
-from ariac_support_flexbe_states.add_numeric_state import AddNumericState
-from ariac_support_flexbe_states.equal_state import EqualState
 from unit_2_flexbe_behaviors.gantrytostation_sm import GantryToStationSM
 from unit_2_flexbe_behaviors.pick_part_unit_2_sm import pick_part_unit_2SM
 from unit_2_flexbe_behaviors.unit2_place_sm import unit2_placeSM
@@ -52,8 +50,8 @@ class unit_2_productSM(Behavior):
 
 
 	def create(self):
-		# x:807 y:615, x:450 y:206
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['number_of_products', 'shipment_type', 'products', 'station_id'])
+		# x:836 y:480, x:450 y:206
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['number_of_products', 'shipment_type', 'products', 'station_id', 'index'])
 		_state_machine.userdata.number_of_products = 0
 		_state_machine.userdata.station_id = ''
 		_state_machine.userdata.shipment_type = ''
@@ -78,40 +76,12 @@ class unit_2_productSM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'invalid_index': Autonomy.Off},
 										remapping={'products': 'products', 'index': 'index', 'type': 'part', 'pose': 'pose'})
 
-			# x:650 y:133
-			OperatableStateMachine.add('GantryToStation',
-										self.use_behavior(GantryToStationSM, 'GantryToStation'),
-										transitions={'finished': 'unit2_place', 'failed': 'failed'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'station_id': 'station_id'})
-
-			# x:111 y:498
-			OperatableStateMachine.add('Increment',
-										AddNumericState(),
-										transitions={'done': 'msg_1'},
-										autonomy={'done': Autonomy.Off},
-										remapping={'value_a': 'index', 'value_b': 'ONE', 'result': 'index'})
-
-			# x:665 y:346
-			OperatableStateMachine.add('NOP-1',
-										AddNumericState(),
-										transitions={'done': 'CheckEqual'},
-										autonomy={'done': Autonomy.Off},
-										remapping={'value_a': 'number_of_products', 'value_b': 'MINUSONE', 'result': 'result'})
-
 			# x:363 y:27
 			OperatableStateMachine.add('msg2',
 										MessageState(),
 										transitions={'continue': 'pick_part_unit_2'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'pose'})
-
-			# x:122 y:258
-			OperatableStateMachine.add('msg_1',
-										MessageState(),
-										transitions={'continue': 'GetPart'},
-										autonomy={'continue': Autonomy.Off},
-										remapping={'message': 'message_01'})
 
 			# x:656 y:49
 			OperatableStateMachine.add('pick_part_unit_2',
@@ -120,19 +90,19 @@ class unit_2_productSM(Behavior):
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'part': 'part', 'station_id': 'station_id'})
 
-			# x:649 y:210
+			# x:656 y:235
 			OperatableStateMachine.add('unit2_place',
 										self.use_behavior(unit2_placeSM, 'unit2_place'),
-										transitions={'finished': 'NOP-1', 'failed': 'failed'},
+										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'pose': 'pose', 'part': 'part', 'station_id': 'station_id'})
 
-			# x:646 y:493
-			OperatableStateMachine.add('CheckEqual',
-										EqualState(),
-										transitions={'true': 'finished', 'false': 'Increment'},
-										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
-										remapping={'value_a': 'index', 'value_b': 'result'})
+			# x:655 y:148
+			OperatableStateMachine.add('GantryToStation',
+										self.use_behavior(GantryToStationSM, 'GantryToStation'),
+										transitions={'finished': 'unit2_place', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
+										remapping={'station_id': 'station_id'})
 
 
 		return _state_machine

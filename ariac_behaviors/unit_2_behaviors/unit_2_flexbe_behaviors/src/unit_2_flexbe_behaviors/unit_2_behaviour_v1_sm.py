@@ -8,10 +8,7 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from ariac_flexbe_states.end_assignment_state import EndAssignment
 from ariac_flexbe_states.message_state import MessageState
-from ariac_logistics_flexbe_states.get_order_state import GetOrderState
-from unit_2_flexbe_behaviors.initialise_behaviour_unit_2_sm import Initialise_behaviour_unit_2SM
 from unit_2_flexbe_behaviors.processorder_unit2_sm import ProcessOrder_unit2SM
 from unit_2_flexbe_behaviors.unit2_test_positions_sm import Unit2TestPositionsSM
 # Additional imports can be added inside the following tags
@@ -37,7 +34,6 @@ class unit_2_behaviour_v1SM(Behavior):
 		# parameters of this behavior
 
 		# references to used behaviors
-		self.add_behavior(Initialise_behaviour_unit_2SM, 'Initialise_behaviour_unit_2')
 		self.add_behavior(ProcessOrder_unit2SM, 'ProcessOrder_unit2')
 		self.add_behavior(Unit2TestPositionsSM, 'Unit2 Test Positions')
 
@@ -52,11 +48,15 @@ class unit_2_behaviour_v1SM(Behavior):
 
 	def create(self):
 		# x:1408 y:250, x:694 y:304
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['order_id', 'assembly_shipments', 'number_of_assembly_shipments', 'index'])
 		_state_machine.userdata.part_type = ''
 		_state_machine.userdata.material_locations = []
 		_state_machine.userdata.message_1 = 'MSG: unit2 initialise complete'
 		_state_machine.userdata.message_2 = 'MSG: order recieved'
+		_state_machine.userdata.order_id = 1
+		_state_machine.userdata.assembly_shipments = ''
+		_state_machine.userdata.number_of_assembly_shipments = ''
+		_state_machine.userdata.index = 0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -65,27 +65,14 @@ class unit_2_behaviour_v1SM(Behavior):
 
 
 		with _state_machine:
-			# x:110 y:71
-			OperatableStateMachine.add('Initialise_behaviour_unit_2',
-										self.use_behavior(Initialise_behaviour_unit_2SM, 'Initialise_behaviour_unit_2'),
-										transitions={'finished': 'InitialiseSucces', 'failed': 'failed'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
-
-			# x:623 y:74
-			OperatableStateMachine.add('GetOrder',
-										GetOrderState(),
-										transitions={'order_found': 'MessageAssemblyShipments', 'no_order_found': 'failed'},
-										autonomy={'order_found': Autonomy.Off, 'no_order_found': Autonomy.Off},
-										remapping={'order_id': 'order_id', 'kitting_shipments': 'kitting_shipments', 'number_of_kitting_shipments': 'number_of_kitting_shipments', 'assembly_shipments': 'assembly_shipments', 'number_of_assembly_shipments': 'number_of_assembly_shipments'})
-
 			# x:393 y:74
 			OperatableStateMachine.add('InitialiseSucces',
 										MessageState(),
-										transitions={'continue': 'GetOrder'},
+										transitions={'continue': 'MessageAssemblyShipments'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'message_1'})
 
-			# x:797 y:64
+			# x:677 y:89
 			OperatableStateMachine.add('MessageAssemblyShipments',
 										MessageState(),
 										transitions={'continue': 'ProcessOrder_unit2'},
@@ -95,21 +82,15 @@ class unit_2_behaviour_v1SM(Behavior):
 			# x:970 y:71
 			OperatableStateMachine.add('ProcessOrder_unit2',
 										self.use_behavior(ProcessOrder_unit2SM, 'ProcessOrder_unit2'),
-										transitions={'finished': 'End', 'failed': 'failed'},
+										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'number_of_assembly_shipments': 'number_of_assembly_shipments', 'assembly_shipments': 'assembly_shipments'})
+										remapping={'number_of_assembly_shipments': 'number_of_assembly_shipments', 'assembly_shipments': 'assembly_shipments', 'index': 'index'})
 
 			# x:1008 y:457
 			OperatableStateMachine.add('Unit2 Test Positions',
 										self.use_behavior(Unit2TestPositionsSM, 'Unit2 Test Positions'),
 										transitions={'finished': 'Unit2 Test Positions', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
-
-			# x:1343 y:74
-			OperatableStateMachine.add('End',
-										EndAssignment(),
-										transitions={'continue': 'finished'},
-										autonomy={'continue': Autonomy.Off})
 
 
 		return _state_machine

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Integration">
+
+	<executable package_path="unit_1_flexbe_behaviors.integration_sm" class="IntegrationSM" />
+	<tagstring></tagstring>
+	<author>Noah Smit Eric Bolier</author>
+	<date>Thu Jun 24 2021</date>
+	<description>
+		.
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="Initialise_behaviour_unit_2" />
+	<contains name="Unit1Handler" />
+	<contains name="Unit1_initialize" />
+	<contains name="unit_2_behaviour_v1" />
+	<contains name="AGVHandler" />
+
+	<!-- Available Parameters -->
+
+</behavior>

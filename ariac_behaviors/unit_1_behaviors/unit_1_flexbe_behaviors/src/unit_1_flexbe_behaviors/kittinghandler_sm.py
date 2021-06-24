@@ -9,9 +9,6 @@
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from ariac_logistics_flexbe_states.get_kitting_shipment_from_order_state import GetKittingShipmentFromOrderState
-from ariac_support_flexbe_states.add_numeric_state import AddNumericState
-from ariac_support_flexbe_states.equal_state import EqualState
-from unit_1_flexbe_behaviors.agvhandler_sm import AGVHandlerSM
 from unit_1_flexbe_behaviors.productshandler_sm import ProductsHandlerSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
@@ -36,7 +33,6 @@ class KittingHandlerSM(Behavior):
 		# parameters of this behavior
 
 		# references to used behaviors
-		self.add_behavior(AGVHandlerSM, 'AGVHandler')
 		self.add_behavior(ProductsHandlerSM, 'ProductsHandler')
 
 		# Additional initialization code can be added inside the following tags
@@ -50,12 +46,16 @@ class KittingHandlerSM(Behavior):
 
 	def create(self):
 		# x:802 y:644, x:382 y:454
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['kitting_shipments', 'number_of_kitting_shipments'])
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['kitting_shipments', 'number_of_kitting_shipments', 'index'], output_keys=['agv_id', 'station_id', 'shipment_type'])
 		_state_machine.userdata.kitting_index = 0
 		_state_machine.userdata.kitting_shipments = []
 		_state_machine.userdata.ONE = 1
 		_state_machine.userdata.number_of_kitting_shipments = 0
 		_state_machine.userdata.MINUSONE = -1
+		_state_machine.userdata.index = 0
+		_state_machine.userdata.agv_id = 0
+		_state_machine.userdata.station_id = ''
+		_state_machine.userdata.shipment_type = ''
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -71,40 +71,12 @@ class KittingHandlerSM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'invalid_index': Autonomy.Off},
 										remapping={'kitting_shipments': 'kitting_shipments', 'kitting_index': 'kitting_index', 'shipment_type': 'shipment_type', 'products': 'products', 'agv_id': 'agv_id', 'station_id': 'station_id', 'number_of_products': 'number_of_products'})
 
-			# x:474 y:374
-			OperatableStateMachine.add('CheckEqual',
-										EqualState(),
-										transitions={'true': 'AGVHandler', 'false': 'IncreaseKI'},
-										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
-										remapping={'value_a': 'kitting_index', 'value_b': 'result'})
-
-			# x:174 y:374
-			OperatableStateMachine.add('IncreaseKI',
-										AddNumericState(),
-										transitions={'done': 'GetKitting'},
-										autonomy={'done': Autonomy.Off},
-										remapping={'value_a': 'kitting_index', 'value_b': 'ONE', 'result': 'kitting_index'})
-
-			# x:467 y:216
-			OperatableStateMachine.add('MinusOne',
-										AddNumericState(),
-										transitions={'done': 'CheckEqual'},
-										autonomy={'done': Autonomy.Off},
-										remapping={'value_a': 'number_of_kitting_shipments', 'value_b': 'MINUSONE', 'result': 'result'})
-
 			# x:470 y:71
 			OperatableStateMachine.add('ProductsHandler',
 										self.use_behavior(ProductsHandlerSM, 'ProductsHandler'),
-										transitions={'finished': 'MinusOne', 'failed': 'failed'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'shipment_type': 'shipment_type', 'products': 'products', 'agv_id': 'agv_id', 'number_of_products': 'number_of_products'})
-
-			# x:644 y:492
-			OperatableStateMachine.add('AGVHandler',
-										self.use_behavior(AGVHandlerSM, 'AGVHandler'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'shipment_type': 'shipment_type', 'agv_id': 'agv_id', 'assembly_station_name': 'station_id'})
+										remapping={'shipment_type': 'shipment_type', 'products': 'products', 'agv_id': 'agv_id', 'number_of_products': 'number_of_products', 'index': 'index'})
 
 
 		return _state_machine

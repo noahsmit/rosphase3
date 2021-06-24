@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="KittingHandler">
+<behavior name="Unit1_initialize">
 
-	<executable package_path="unit_1_flexbe_behaviors.kittinghandler_sm" class="KittingHandlerSM" />
+	<executable package_path="unit_1_flexbe_behaviors.unit1_initialize_sm" class="Unit1_initializeSM" />
 	<tagstring></tagstring>
 	<author>Noah</author>
-	<date>Thu Jun 10 2021</date>
+	<date>Thu Jun 24 2021</date>
 	<description>
 		.
 	</description>
 
 
 	<!-- Contained Behaviors -->
-	<contains name="ProductsHandler" />
 
 	<!-- Available Parameters -->
 

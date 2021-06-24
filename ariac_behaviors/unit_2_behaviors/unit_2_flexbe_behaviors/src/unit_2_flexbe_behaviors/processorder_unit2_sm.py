@@ -50,12 +50,13 @@ class ProcessOrder_unit2SM(Behavior):
 	def create(self):
 		table = 'ariac_unit2_tables'
 		# x:924 y:311, x:309 y:379
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['number_of_assembly_shipments', 'assembly_shipments'])
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['number_of_assembly_shipments', 'assembly_shipments', 'index'])
 		_state_machine.userdata.message_1 = 'MSG: assembly_index recieved'
 		_state_machine.userdata.agv_id = ''
 		_state_machine.userdata.assembly_index = 0
 		_state_machine.userdata.assembly_shipments = []
 		_state_machine.userdata.number_of_assembly_shipments = 0
+		_state_machine.userdata.index = 0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -83,7 +84,7 @@ class ProcessOrder_unit2SM(Behavior):
 										self.use_behavior(unit_2_productSM, 'unit_2_product'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'number_of_products': 'number_of_products', 'shipment_type': 'shipment_type', 'products': 'products', 'station_id': 'station_id'})
+										remapping={'number_of_products': 'number_of_products', 'shipment_type': 'shipment_type', 'products': 'products', 'station_id': 'station_id', 'index': 'index'})
 
 			# x:550 y:21
 			OperatableStateMachine.add('GantryToStation',
