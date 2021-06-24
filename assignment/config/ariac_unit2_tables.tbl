@@ -60,7 +60,7 @@
 
     <table name = "parts">
 	    <part name="assembly_battery_green">
-		    <offset value="0.04" />
+		    <offset value="0.038" />
 	    </part>
 	    <part name="assembly_regulator_red">
 		    <offset value="0.051" />
@@ -69,7 +69,7 @@
 		    <offset value="0.04" />
 	    </part>
 	    <part name="assembly_pump_blue">
-		    <offset value="0.05" />
+		    <offset value="0.063" />
 	    </part>
     </table>
 	

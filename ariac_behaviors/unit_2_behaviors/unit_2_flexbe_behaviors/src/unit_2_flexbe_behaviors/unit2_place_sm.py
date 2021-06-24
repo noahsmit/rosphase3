@@ -12,6 +12,7 @@ from ariac_flexbe_states.add_offset_to_pose_state import AddOffsetToPoseState
 from ariac_flexbe_states.compute_grasp_ariac_state import ComputeGraspAriacState
 from ariac_flexbe_states.get_object_pose import GetObjectPoseState
 from ariac_flexbe_states.lookup_from_table import LookupFromTableState
+from ariac_flexbe_states.message_state import MessageState
 from ariac_flexbe_states.moveit_to_joints_dyn_ariac_state import MoveitToJointsDynAriacState
 from ariac_flexbe_states.vacuum_gripper_control_state import VacuumGripperControlState
 from flexbe_states.wait_state import WaitState
@@ -84,16 +85,9 @@ class unit2_placeSM(Behavior):
 			# x:501 y:36
 			OperatableStateMachine.add('ComputePlace',
 										ComputeGraspAriacState(joint_names=['gantry_arm_elbow_joint', 'gantry_arm_shoulder_lift_joint', 'gantry_arm_shoulder_pan_joint', 'gantry_arm_wrist_1_joint', 'gantry_arm_wrist_2_joint', 'gantry_arm_wrist_3_joint']),
-										transitions={'continue': 'ComputePlace2', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'move_group': 'move_group_arm', 'namespace': 'namespace', 'tool_link': 'tool_link', 'pose': 'output_pose', 'offset': 'offset', 'rotation': 'rotation', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
-
-			# x:566 y:151
-			OperatableStateMachine.add('ComputePlace2',
-										ComputeGraspAriacState(joint_names=['gantry_arm_elbow_joint', 'gantry_arm_shoulder_lift_joint', 'gantry_arm_shoulder_pan_joint', 'gantry_arm_wrist_1_joint', 'gantry_arm_wrist_2_joint', 'gantry_arm_wrist_3_joint']),
 										transitions={'continue': 'MoveToPlace', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'move_group': 'move_group_arm', 'namespace': 'namespace', 'tool_link': 'tool_link', 'pose': 'output_pose', 'offset': 'offset2', 'rotation': 'rotation', 'joint_values': 'joint_values2', 'joint_names': 'joint_names2'})
+										remapping={'move_group': 'move_group_arm', 'namespace': 'namespace', 'tool_link': 'tool_link', 'pose': 'output_pose', 'offset': 'offset', 'rotation': 'rotation', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
 			# x:1119 y:46
 			OperatableStateMachine.add('GripperOff',
@@ -101,19 +95,19 @@ class unit2_placeSM(Behavior):
 										transitions={'continue': 'finished', 'failed': 'GripperOff'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:739 y:281
+			# x:856 y:191
 			OperatableStateMachine.add('MoveToPlace',
 										MoveitToJointsDynAriacState(),
-										transitions={'reached': 'MoveToPlace2', 'planning_failed': 'WaitRetry2', 'control_failed': 'WaitRetry2'},
+										transitions={'reached': 'GripperOff', 'planning_failed': 'WaitRetry2', 'control_failed': 'WaitRetry2'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off},
 										remapping={'namespace': 'namespace', 'move_group': 'move_group_arm', 'action_topic': 'action_topic', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:952 y:137
-			OperatableStateMachine.add('MoveToPlace2',
-										MoveitToJointsDynAriacState(),
-										transitions={'reached': 'GripperOff', 'planning_failed': 'failed', 'control_failed': 'failed'},
-										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off},
-										remapping={'namespace': 'namespace', 'move_group': 'move_group_arm', 'action_topic': 'action_topic', 'joint_values': 'joint_values2', 'joint_names': 'joint_names2'})
+			# x:417 y:152
+			OperatableStateMachine.add('PosMSG',
+										MessageState(),
+										transitions={'continue': 'ComputePlace'},
+										autonomy={'continue': Autonomy.Off},
+										remapping={'message': 'output_pose'})
 
 			# x:55 y:114
 			OperatableStateMachine.add('Test',
@@ -131,7 +125,7 @@ class unit2_placeSM(Behavior):
 			# x:262 y:79
 			OperatableStateMachine.add('AddOffset',
 										AddOffsetToPoseState(),
-										transitions={'continue': 'ComputePlace'},
+										transitions={'continue': 'PosMSG'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'input_pose': 'briefcase_pose', 'offset_pose': 'pose', 'output_pose': 'output_pose'})
 

@@ -78,7 +78,6 @@ orders:
           type: assembly_pump_blue
           pose:
             xyz: [0.032085, -0.152835, 0.25]
-            rpy: [0, 0, 0]
 
           
 models_over_bins:

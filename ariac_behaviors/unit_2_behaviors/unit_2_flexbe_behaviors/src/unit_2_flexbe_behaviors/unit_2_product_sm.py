@@ -62,7 +62,7 @@ class unit_2_productSM(Behavior):
 		_state_machine.userdata.index = 0
 		_state_machine.userdata.message_01 = 'MSG: increment added'
 		_state_machine.userdata.station_id = ''
-		_state_machine.userdata.index_check = 1
+		_state_machine.userdata.MINUSONE = -1
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -78,7 +78,7 @@ class unit_2_productSM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'invalid_index': Autonomy.Off},
 										remapping={'products': 'products', 'index': 'index', 'type': 'part', 'pose': 'pose'})
 
-			# x:672 y:175
+			# x:650 y:133
 			OperatableStateMachine.add('GantryToStation',
 										self.use_behavior(GantryToStationSM, 'GantryToStation'),
 										transitions={'finished': 'unit2_place', 'failed': 'failed'},
@@ -92,12 +92,12 @@ class unit_2_productSM(Behavior):
 										autonomy={'done': Autonomy.Off},
 										remapping={'value_a': 'index', 'value_b': 'ONE', 'result': 'index'})
 
-			# x:387 y:495
-			OperatableStateMachine.add('IncrementCheck',
+			# x:665 y:346
+			OperatableStateMachine.add('NOP-1',
 										AddNumericState(),
-										transitions={'done': 'Increment'},
+										transitions={'done': 'CheckEqual'},
 										autonomy={'done': Autonomy.Off},
-										remapping={'value_a': 'index_check', 'value_b': 'ONE', 'result': 'index_check'})
+										remapping={'value_a': 'number_of_products', 'value_b': 'MINUSONE', 'result': 'result'})
 
 			# x:363 y:27
 			OperatableStateMachine.add('msg2',
@@ -120,19 +120,19 @@ class unit_2_productSM(Behavior):
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'part': 'part', 'station_id': 'station_id'})
 
-			# x:654 y:307
+			# x:649 y:210
 			OperatableStateMachine.add('unit2_place',
 										self.use_behavior(unit2_placeSM, 'unit2_place'),
-										transitions={'finished': 'CheckEqual', 'failed': 'failed'},
+										transitions={'finished': 'NOP-1', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'pose': 'pose', 'part': 'part', 'station_id': 'station_id'})
 
-			# x:660 y:459
+			# x:646 y:493
 			OperatableStateMachine.add('CheckEqual',
 										EqualState(),
-										transitions={'true': 'finished', 'false': 'IncrementCheck'},
+										transitions={'true': 'finished', 'false': 'Increment'},
 										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
-										remapping={'value_a': 'number_of_products', 'value_b': 'index_check'})
+										remapping={'value_a': 'index', 'value_b': 'result'})
 
 
 		return _state_machine
