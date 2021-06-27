@@ -10,11 +10,13 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from ariac_flexbe_states.compute_grasp_ariac_state import ComputeGraspAriacState
 from ariac_flexbe_states.detect_part_camera_ariac_state import DetectPartCameraAriacState
+from ariac_flexbe_states.get_gripper_status_state import GetGripperStatusState
 from ariac_flexbe_states.lookup_from_table import LookupFromTableState
 from ariac_flexbe_states.message_state import MessageState
 from ariac_flexbe_states.moveit_to_joints_dyn_ariac_state import MoveitToJointsDynAriacState
 from ariac_flexbe_states.srdf_state_to_moveit_ariac_state import SrdfStateToMoveitAriac
 from ariac_flexbe_states.vacuum_gripper_control_state import VacuumGripperControlState
+from ariac_support_flexbe_states.equal_state import EqualState
 from ariac_support_flexbe_states.text_to_float_state import TextToFloatState
 from flexbe_states.wait_state import WaitState
 # Additional imports can be added inside the following tags
@@ -52,7 +54,7 @@ class pick_part_unit_2SM(Behavior):
 
 	def create(self):
 		table = 'ariac_unit2_tables'
-		# x:191 y:483, x:583 y:240
+		# x:34 y:349, x:583 y:240
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['part', 'station_id'])
 		_state_machine.userdata.part = ''
 		_state_machine.userdata.location_type = ''
@@ -69,6 +71,7 @@ class pick_part_unit_2SM(Behavior):
 		_state_machine.userdata.tool_link = 'gantry_arm_ee_link'
 		_state_machine.userdata.rotation = 0
 		_state_machine.userdata.move_group_arm = 'gantry_arm'
+		_state_machine.userdata.TRUE = True
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -83,6 +86,13 @@ class pick_part_unit_2SM(Behavior):
 										transitions={'found': 'MessageCF', 'not_found': 'failed'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'station_id', 'column_value': 'camera_frame'})
+
+			# x:87 y:477
+			OperatableStateMachine.add('CheckAttached',
+										EqualState(),
+										transitions={'true': 'finished', 'false': 'DetectPart'},
+										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
+										remapping={'value_a': 'attached', 'value_b': 'TRUE'})
 
 			# x:1141 y:426
 			OperatableStateMachine.add('ComputeMSG',
@@ -104,6 +114,13 @@ class pick_part_unit_2SM(Behavior):
 										transitions={'continue': 'PoseMSG', 'failed': 'failed', 'not_found': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'ref_frame': 'ref_frame', 'camera_topic': 'camera_topic', 'camera_frame': 'camera_frame', 'part': 'part', 'pose': 'pose'})
+
+			# x:266 y:494
+			OperatableStateMachine.add('GetGripperStatus',
+										GetGripperStatusState(topic_name='/ariac/gantry/arm/gripper/state'),
+										transitions={'continue': 'CheckAttached', 'fail': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'fail': Autonomy.Off},
+										remapping={'enabled': 'enabled', 'attached': 'attached'})
 
 			# x:498 y:44
 			OperatableStateMachine.add('GetOffset',
@@ -133,24 +150,17 @@ class pick_part_unit_2SM(Behavior):
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'camera_frame'})
 
-			# x:477 y:572
+			# x:473 y:604
 			OperatableStateMachine.add('MoveBack',
 										SrdfStateToMoveitAriac(),
-										transitions={'reached': 'finished', 'planning_failed': 'failed', 'control_failed': 'failed', 'param_error': 'failed'},
-										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
-										remapping={'config_name': 'pick', 'move_group': 'move_group', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
-
-			# x:640 y:499
-			OperatableStateMachine.add('MoveBack_2',
-										SrdfStateToMoveitAriac(),
-										transitions={'reached': 'MoveBack', 'planning_failed': 'finished', 'control_failed': 'finished', 'param_error': 'failed'},
+										transitions={'reached': 'GetGripperStatus', 'planning_failed': 'Wait', 'control_failed': 'Wait', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'pick', 'move_group': 'move_group', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
 			# x:944 y:589
 			OperatableStateMachine.add('MoveToPart',
 										MoveitToJointsDynAriacState(),
-										transitions={'reached': 'MoveBack', 'planning_failed': 'WaitRetry', 'control_failed': 'WaitRetry'},
+										transitions={'reached': 'Wait', 'planning_failed': 'Wait', 'control_failed': 'Wait'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off},
 										remapping={'namespace': 'namespace', 'move_group': 'move_group_arm', 'action_topic': 'action_topic', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
@@ -182,10 +192,10 @@ class pick_part_unit_2SM(Behavior):
 										autonomy={'done': Autonomy.Off},
 										remapping={'text_value': 'offset_text', 'float_value': 'offset'})
 
-			# x:672 y:354
-			OperatableStateMachine.add('WaitRetry',
-										WaitState(wait_time=0.5),
-										transitions={'done': 'MoveBack_2'},
+			# x:723 y:594
+			OperatableStateMachine.add('Wait',
+										WaitState(wait_time=0.1),
+										transitions={'done': 'MoveBack'},
 										autonomy={'done': Autonomy.Off})
 
 			# x:1204 y:253

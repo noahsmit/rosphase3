@@ -66,7 +66,7 @@ class unit2_placeSM(Behavior):
 		_state_machine.userdata.rotation = 0
 		_state_machine.userdata.frame = ''
 		_state_machine.userdata.ref_frame = 'world'
-		_state_machine.userdata.offset = 0.3
+		_state_machine.userdata.offset = 0.4
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -85,7 +85,7 @@ class unit2_placeSM(Behavior):
 			# x:501 y:36
 			OperatableStateMachine.add('ComputePlace',
 										ComputeGraspAriacState(joint_names=['gantry_arm_elbow_joint', 'gantry_arm_shoulder_lift_joint', 'gantry_arm_shoulder_pan_joint', 'gantry_arm_wrist_1_joint', 'gantry_arm_wrist_2_joint', 'gantry_arm_wrist_3_joint']),
-										transitions={'continue': 'MoveToPlace', 'failed': 'failed'},
+										transitions={'continue': 'MoveToPlace', 'failed': 'GripperOff'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'move_group': 'move_group_arm', 'namespace': 'namespace', 'tool_link': 'tool_link', 'pose': 'output_pose', 'offset': 'offset', 'rotation': 'rotation', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 

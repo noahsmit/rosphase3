@@ -105,10 +105,10 @@ class IntegrationSM(Behavior):
 										autonomy={'order_found': Autonomy.Off, 'no_order_found': Autonomy.Off},
 										remapping={'order_id': 'order_id', 'kitting_shipments': 'kitting_shipments', 'number_of_kitting_shipments': 'number_of_kitting_shipments', 'assembly_shipments': 'assembly_shipments', 'number_of_assembly_shipments': 'number_of_assembly_shipments'})
 
-			# x:186 y:109
+			# x:158 y:297
 			OperatableStateMachine.add('Initialise_behaviour_unit_2',
 										self.use_behavior(Initialise_behaviour_unit_2SM, 'Initialise_behaviour_unit_2'),
-										transitions={'finished': 'Unit1_initialize', 'failed': 'failed'},
+										transitions={'finished': 'GetOrder', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:972 y:208
@@ -118,17 +118,17 @@ class IntegrationSM(Behavior):
 										autonomy={'done': Autonomy.Off},
 										remapping={'value_a': 'number_of_products', 'value_b': 'MINUSONE', 'result': 'result'})
 
-			# x:766 y:49
+			# x:597 y:116
 			OperatableStateMachine.add('Unit1Handler',
 										self.use_behavior(Unit1HandlerSM, 'Unit1Handler'),
 										transitions={'finished': 'unit_2_behaviour_v1', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'index': 'index', 'order_id': 'order_id', 'kitting_shipments': 'kitting_shipments', 'number_of_kitting_shipments': 'number_of_kitting_shipments', 'agv_id': 'agv_id1', 'station_id': 'station_id1', 'shipment_type': 'shipment_type1'})
 
-			# x:370 y:63
+			# x:227 y:56
 			OperatableStateMachine.add('Unit1_initialize',
 										self.use_behavior(Unit1_initializeSM, 'Unit1_initialize'),
-										transitions={'finished': 'GetOrder', 'failed': 'failed'},
+										transitions={'finished': 'Unit1_initialize', 'failed': 'Unit1_initialize'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:39 y:120
@@ -142,7 +142,7 @@ class IntegrationSM(Behavior):
 										self.use_behavior(unit_2_behaviour_v1SM, 'unit_2_behaviour_v1'),
 										transitions={'finished': 'NOP-1', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'order_id': 'order_id', 'assembly_shipments': 'assembly_shipments', 'number_of_assembly_shipments': 'number_of_assembly_shipments'})
+										remapping={'order_id': 'order_id', 'assembly_shipments': 'assembly_shipments', 'number_of_assembly_shipments': 'number_of_assembly_shipments', 'index': 'index'})
 
 			# x:1212 y:300
 			OperatableStateMachine.add('AGVHandler1',
