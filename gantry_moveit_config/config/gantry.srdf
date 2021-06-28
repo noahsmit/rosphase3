@@ -44,9 +44,9 @@
     </group_state>
 
     <group_state name="gantry_station_1" group="gantry_torso">
-        <joint name="small_long_joint" value="-3.8" />
+        <joint name="small_long_joint" value="-3.7" />
         <joint name="torso_base_main_joint" value="1.57" />
-        <joint name="torso_rail_joint" value="-3.08" />
+        <joint name="torso_rail_joint" value="-2.9" />
     </group_state>
 
     <group_state name="gantry_station_4" group="gantry_torso">
@@ -56,9 +56,9 @@
     </group_state>
 
     <group_state name="gantry_station_3" group="gantry_torso">
-        <joint name="small_long_joint" value="-3.8" />
+        <joint name="small_long_joint" value="-3.7" />
         <joint name="torso_base_main_joint" value="1.57" />
-        <joint name="torso_rail_joint" value="3.08" />
+        <joint name="torso_rail_joint" value="2.9" />
     </group_state>
 
     <group_state name="gantry_station_group_A" group="gantry_torso">
