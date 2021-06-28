@@ -76,7 +76,7 @@ class unit_2_behaviour_v1SM(Behavior):
 										self.use_behavior(ProcessOrder_unit2SM, 'ProcessOrder_unit2'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'number_of_assembly_shipments': 'number_of_assembly_shipments', 'assembly_shipments': 'assembly_shipments', 'index': 'index'})
+										remapping={'number_of_assembly_shipments': 'number_of_assembly_shipments', 'assembly_shipments': 'assembly_shipments', 'index': 'index', 'number_of_products_2': 'number_of_products_2'})
 
 
 		return _state_machine

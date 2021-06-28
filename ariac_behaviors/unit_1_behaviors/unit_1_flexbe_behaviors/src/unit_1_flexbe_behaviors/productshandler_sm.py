@@ -47,7 +47,7 @@ class ProductsHandlerSM(Behavior):
 
 
 	def create(self):
-		# x:783 y:386, x:130 y:365
+		# x:933 y:340, x:130 y:365
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['shipment_type', 'products', 'agv_id', 'number_of_products_1', 'index'])
 		_state_machine.userdata.products = []
 		_state_machine.userdata.agv_id = ''
@@ -72,14 +72,14 @@ class ProductsHandlerSM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'invalid_index': Autonomy.Off},
 										remapping={'products': 'products', 'index': 'index', 'type': 'part', 'pose': 'pose'})
 
-			# x:626 y:46
+			# x:620 y:71
 			OperatableStateMachine.add('Pick',
 										self.use_behavior(PickSM, 'Pick'),
 										transitions={'finished': 'Place', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'part': 'part', 'pose': 'pose', 'agv_id': 'agv_id'})
 
-			# x:626 y:138
+			# x:620 y:321
 			OperatableStateMachine.add('Place',
 										self.use_behavior(PlaceSM, 'Place'),
 										transitions={'finished': 'finished', 'failed': 'failed'},

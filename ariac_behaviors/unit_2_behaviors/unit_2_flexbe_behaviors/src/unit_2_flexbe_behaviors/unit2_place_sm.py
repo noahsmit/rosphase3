@@ -53,7 +53,6 @@ class unit2_placeSM(Behavior):
 		table = 'ariac_unit2_tables'
 		# x:1183 y:402, x:599 y:383
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['pose', 'part', 'station_id'])
-		_state_machine.userdata.move_group = 'gantry_full'
 		_state_machine.userdata.action_topic = '/move_group'
 		_state_machine.userdata.namespace = '/ariac/gantry'
 		_state_machine.userdata.robot_name = ''
@@ -67,6 +66,8 @@ class unit2_placeSM(Behavior):
 		_state_machine.userdata.frame = ''
 		_state_machine.userdata.ref_frame = 'world'
 		_state_machine.userdata.offset = 0.4
+		_state_machine.userdata.move_group = 'gantry_full'
+		_state_machine.userdata.config_name = 'gantry_drop_as1'
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -102,27 +103,27 @@ class unit2_placeSM(Behavior):
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off},
 										remapping={'namespace': 'namespace', 'move_group': 'move_group_arm', 'action_topic': 'action_topic', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:417 y:152
+			# x:493 y:124
 			OperatableStateMachine.add('PosMSG',
 										MessageState(),
 										transitions={'continue': 'ComputePlace'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'output_pose'})
 
-			# x:55 y:114
+			# x:91 y:24
 			OperatableStateMachine.add('Test',
 										GetObjectPoseState(),
 										transitions={'continue': 'AddOffset', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'ref_frame': 'ref_frame', 'frame': 'frame', 'pose': 'briefcase_pose'})
 
-			# x:713 y:36
+			# x:926 y:331
 			OperatableStateMachine.add('WaitRetry2',
 										WaitState(wait_time=0.5),
 										transitions={'done': 'MoveToPlace'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:262 y:79
+			# x:286 y:24
 			OperatableStateMachine.add('AddOffset',
 										AddOffsetToPoseState(),
 										transitions={'continue': 'PosMSG'},

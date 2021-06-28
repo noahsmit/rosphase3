@@ -45,7 +45,7 @@ class KittingHandlerSM(Behavior):
 
 
 	def create(self):
-		# x:802 y:644, x:382 y:454
+		# x:833 y:90, x:333 y:590
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['kitting_shipments', 'number_of_kitting_shipments', 'index'], output_keys=['agv_id', 'station_id', 'shipment_type', 'number_of_products_1'])
 		_state_machine.userdata.kitting_index = 0
 		_state_machine.userdata.kitting_shipments = []
@@ -77,7 +77,7 @@ class KittingHandlerSM(Behavior):
 										self.use_behavior(ProductsHandlerSM, 'ProductsHandler'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'shipment_type': 'shipment_type', 'products': 'products', 'agv_id': 'agv_id', 'number_of_products': 'number_of_products_1', 'index': 'index'})
+										remapping={'shipment_type': 'shipment_type', 'products': 'products', 'agv_id': 'agv_id', 'number_of_products_1': 'number_of_products_1', 'index': 'index'})
 
 
 		return _state_machine

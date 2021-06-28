@@ -45,7 +45,7 @@ class Unit1HandlerSM(Behavior):
 
 
 	def create(self):
-		# x:1019 y:131, x:553 y:383
+		# x:1019 y:131, x:933 y:290
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['index', 'order_id', 'kitting_shipments', 'number_of_kitting_shipments'], output_keys=['agv_id', 'station_id', 'shipment_type', 'number_of_products'])
 		_state_machine.userdata.robot_name = ''
 		_state_machine.userdata.startmessage = '[+] Started!'
@@ -65,19 +65,19 @@ class Unit1HandlerSM(Behavior):
 
 
 		with _state_machine:
-			# x:173 y:108
+			# x:243 y:74
 			OperatableStateMachine.add('StartMessage',
 										MessageState(),
 										transitions={'continue': 'KittingHandler'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'startmessage'})
 
-			# x:699 y:107
+			# x:570 y:71
 			OperatableStateMachine.add('KittingHandler',
 										self.use_behavior(KittingHandlerSM, 'KittingHandler'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'kitting_shipments': 'kitting_shipments', 'number_of_kitting_shipments': 'number_of_kitting_shipments', 'index': 'index', 'agv_id': 'agv_id', 'station_id': 'station_id', 'shipment_type': 'shipment_type', 'number_of_products': 'number_of_products'})
+										remapping={'kitting_shipments': 'kitting_shipments', 'number_of_kitting_shipments': 'number_of_kitting_shipments', 'index': 'index', 'agv_id': 'agv_id', 'station_id': 'station_id', 'shipment_type': 'shipment_type', 'number_of_products_1': 'number_of_products_1'})
 
 
 		return _state_machine

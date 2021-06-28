@@ -51,7 +51,7 @@ class PlaceSM(Behavior):
 
 	def create(self):
 		table = 'ariac_unit1_tables'
-		# x:373 y:435, x:523 y:274
+		# x:1233 y:590, x:523 y:274
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['agv_id', 'offset_pose'])
 		_state_machine.userdata.agv_id = ''
 		_state_machine.userdata.ref_frame = 'linear_arm_actuator'
@@ -71,80 +71,80 @@ class PlaceSM(Behavior):
 
 
 		with _state_machine:
-			# x:87 y:52
+			# x:85 y:24
 			OperatableStateMachine.add('LookUpConfig',
 										LookupFromTableState(parameter_name=table, table_name='agvs', index_title='agv', column_title='config'),
 										transitions={'found': 'LookUpTray', 'not_found': 'failed'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'agv_id', 'column_value': 'config_name'})
 
-			# x:910 y:198
+			# x:1179 y:174
 			OperatableStateMachine.add('ComputePlace',
 										ComputeGraspAriacState(joint_names=['linear_arm_actuator_joint', 'shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint', 'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']),
 										transitions={'continue': 'MoveToPlace', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'move_group': 'move_group', 'namespace': 'namespace', 'tool_link': 'tool_link', 'pose': 'output_pose', 'offset': 'offset', 'rotation': 'rotation', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:776 y:86
+			# x:925 y:86
 			OperatableStateMachine.add('GetPose',
 										GetObjectPoseState(),
 										transitions={'continue': 'AddOffsetXYZ', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'ref_frame': 'ref_frame', 'frame': 'tray', 'pose': 'pose'})
 
-			# x:896 y:425
+			# x:1174 y:374
 			OperatableStateMachine.add('GripperOff',
 										VacuumGripperControlState(enable=False, service_name='/ariac/kitting/arm/gripper/control'),
 										transitions={'continue': 'MoveBack', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:301 y:75
+			# x:285 y:24
 			OperatableStateMachine.add('LookUpTray',
 										LookupFromTableState(parameter_name=table, table_name='agvs', index_title='agv', column_title='tray'),
 										transitions={'found': 'MoveToAGV', 'not_found': 'failed'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'agv_id', 'column_value': 'tray'})
 
-			# x:600 y:416
+			# x:1184 y:474
 			OperatableStateMachine.add('MoveBack',
 										SrdfStateToMoveitAriac(),
 										transitions={'reached': 'finished', 'planning_failed': 'WaitRetry3', 'control_failed': 'WaitRetry3', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'config_name', 'move_group': 'move_group', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:535 y:112
+			# x:534 y:24
 			OperatableStateMachine.add('MoveToAGV',
 										SrdfStateToMoveitAriac(),
 										transitions={'reached': 'GetPose', 'planning_failed': 'WaitRetry', 'control_failed': 'WaitRetry', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'config_name', 'move_group': 'move_group', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:901 y:306
+			# x:1171 y:274
 			OperatableStateMachine.add('MoveToPlace',
 										MoveitToJointsDynAriacState(),
 										transitions={'reached': 'GripperOff', 'planning_failed': 'WaitRetry2', 'control_failed': 'WaitRetry2'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off},
 										remapping={'namespace': 'namespace', 'move_group': 'move_group', 'action_topic': 'action_topic', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:556 y:21
+			# x:792 y:8
 			OperatableStateMachine.add('WaitRetry',
 										WaitState(wait_time=0.5),
 										transitions={'done': 'MoveToAGV'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:1095 y:316
+			# x:1462 y:320
 			OperatableStateMachine.add('WaitRetry2',
 										WaitState(wait_time=0.5),
 										transitions={'done': 'MoveToPlace'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:622 y:565
+			# x:1457 y:474
 			OperatableStateMachine.add('WaitRetry3',
 										WaitState(wait_time=0.5),
 										transitions={'done': 'MoveBack'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:921 y:92
+			# x:1188 y:87
 			OperatableStateMachine.add('AddOffsetXYZ',
 										AddOffsetToPoseState(),
 										transitions={'continue': 'ComputePlace'},

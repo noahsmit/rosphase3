@@ -87,35 +87,35 @@ class pick_part_unit_2SM(Behavior):
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'station_id', 'column_value': 'camera_frame'})
 
-			# x:87 y:477
+			# x:106 y:578
 			OperatableStateMachine.add('CheckAttached',
 										EqualState(),
 										transitions={'true': 'finished', 'false': 'DetectPart'},
 										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
 										remapping={'value_a': 'attached', 'value_b': 'TRUE'})
 
-			# x:1141 y:426
+			# x:1453 y:473
 			OperatableStateMachine.add('ComputeMSG',
 										MessageState(),
 										transitions={'continue': 'ActivateGripper'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'joint_values'})
 
-			# x:929 y:329
+			# x:1428 y:381
 			OperatableStateMachine.add('ComputePos',
 										ComputeGraspAriacState(joint_names=['gantry_arm_elbow_joint', 'gantry_arm_shoulder_lift_joint', 'gantry_arm_shoulder_pan_joint', 'gantry_arm_wrist_1_joint', 'gantry_arm_wrist_2_joint', 'gantry_arm_wrist_3_joint']),
 										transitions={'continue': 'ComputeMSG', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'move_group': 'move_group_arm', 'namespace': 'namespace', 'tool_link': 'tool_link', 'pose': 'pose', 'offset': 'offset', 'rotation': 'rotation', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:1025 y:55
+			# x:1412 y:52
 			OperatableStateMachine.add('DetectPart',
 										DetectPartCameraAriacState(time_out=0.5),
 										transitions={'continue': 'PoseMSG', 'failed': 'failed', 'not_found': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'ref_frame': 'ref_frame', 'camera_topic': 'camera_topic', 'camera_frame': 'camera_frame', 'part': 'part', 'pose': 'pose'})
 
-			# x:266 y:494
+			# x:315 y:589
 			OperatableStateMachine.add('GetGripperStatus',
 										GetGripperStatusState(topic_name='/ariac/gantry/arm/gripper/state'),
 										transitions={'continue': 'CheckAttached', 'fail': 'failed'},
@@ -129,7 +129,7 @@ class pick_part_unit_2SM(Behavior):
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'part', 'column_value': 'offset_text'})
 
-			# x:318 y:21
+			# x:285 y:74
 			OperatableStateMachine.add('LookUpCameraTopic',
 										LookupFromTableState(parameter_name=table, table_name='stations', index_title='station', column_title='camera_topic'),
 										transitions={'found': 'GetOffset', 'not_found': 'failed'},
@@ -143,68 +143,68 @@ class pick_part_unit_2SM(Behavior):
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'station_id', 'column_value': 'pick'})
 
-			# x:93 y:50
+			# x:93 y:74
 			OperatableStateMachine.add('MessageCF',
 										MessageState(),
 										transitions={'continue': 'LookUpCameraTopic'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'camera_frame'})
 
-			# x:473 y:604
+			# x:525 y:594
 			OperatableStateMachine.add('MoveBack',
 										SrdfStateToMoveitAriac(),
 										transitions={'reached': 'GetGripperStatus', 'planning_failed': 'Wait', 'control_failed': 'Wait', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'pick', 'move_group': 'move_group', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:944 y:589
+			# x:1080 y:581
 			OperatableStateMachine.add('MoveToPart',
 										MoveitToJointsDynAriacState(),
 										transitions={'reached': 'Wait', 'planning_failed': 'Wait', 'control_failed': 'Wait'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off},
 										remapping={'namespace': 'namespace', 'move_group': 'move_group_arm', 'action_topic': 'action_topic', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:939 y:247
+			# x:1432 y:281
 			OperatableStateMachine.add('MoveToPick',
 										SrdfStateToMoveitAriac(),
 										transitions={'reached': 'ComputePos', 'planning_failed': 'WaitRetry_2', 'control_failed': 'WaitRetry_2', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'pick', 'move_group': 'move_group', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:894 y:168
+			# x:894 y:55
 			OperatableStateMachine.add('MsgCT',
 										MessageState(),
 										transitions={'continue': 'TextToFloatOffset'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'pick'})
 
-			# x:1133 y:150
+			# x:1436 y:187
 			OperatableStateMachine.add('PoseMSG',
 										MessageState(),
 										transitions={'continue': 'MoveToPick'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'pose'})
 
-			# x:850 y:52
+			# x:1092 y:47
 			OperatableStateMachine.add('TextToFloatOffset',
 										TextToFloatState(),
 										transitions={'done': 'DetectPart'},
 										autonomy={'done': Autonomy.Off},
 										remapping={'text_value': 'offset_text', 'float_value': 'offset'})
 
-			# x:723 y:594
+			# x:820 y:587
 			OperatableStateMachine.add('Wait',
 										WaitState(wait_time=0.1),
 										transitions={'done': 'MoveBack'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:1204 y:253
+			# x:1626 y:289
 			OperatableStateMachine.add('WaitRetry_2',
 										WaitState(wait_time=0.5),
 										transitions={'done': 'MoveToPick'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:935 y:426
+			# x:1438 y:556
 			OperatableStateMachine.add('ActivateGripper',
 										VacuumGripperControlState(enable=True, service_name='/ariac/gantry/arm/gripper/control'),
 										transitions={'continue': 'MoveToPart', 'failed': 'failed'},

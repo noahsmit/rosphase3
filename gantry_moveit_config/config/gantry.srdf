@@ -160,22 +160,21 @@
         <joint name="torso_rail_joint" value="3.7" />
     </group_state>
 
-
-
     
-    <group_state name="gantry_drop_as4" group="gantry_full">
-        <joint name="gantry_arm_elbow_joint" value="1.88" />
-        <joint name="gantry_arm_shoulder_lift_joint" value="-2.13" />
+    <group_state name="gantry_drop_as1" group="gantry_full">
+        <joint name="gantry_arm_elbow_joint" value="1.26" />
+        <joint name="gantry_arm_shoulder_lift_joint" value="-2.26" />
         <joint name="gantry_arm_shoulder_pan_joint" value="0.0" />
-        <joint name="gantry_arm_wrist_1_joint" value="0.12" />
-        <joint name="gantry_arm_wrist_2_joint" value="1.55" />
+        <joint name="gantry_arm_wrist_1_joint" value="-2.13" />
+        <joint name="gantry_arm_wrist_2_joint" value="-1.51" />
         <joint name="gantry_arm_wrist_3_joint" value="0.83" />
-        <joint name="small_long_joint" value="-9.0" />
+        <joint name="small_long_joint" value="-3.67" />
         <joint name="torso_base_main_joint" value="1.57" />
-        <joint name="torso_rail_joint" value="2.97" />
+        <joint name="torso_rail_joint" value="-2.97" />
     </group_state>
 
-    
+
+
     
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="gantry_ee" parent_link="gantry_arm_ee_link" group="gantry_arm" />

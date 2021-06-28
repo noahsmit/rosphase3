@@ -77,14 +77,14 @@ class ProcessOrder_unit2SM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'invalid_index': Autonomy.Off},
 										remapping={'assembly_shipments': 'assembly_shipments', 'assembly_index': 'assembly_index', 'shipment_type': 'shipment_type', 'products': 'products', 'shipment_type': 'shipment_type', 'station_id': 'station_id', 'number_of_products': 'number_of_products_2'})
 
-			# x:898 y:47
+			# x:920 y:21
 			OperatableStateMachine.add('GantryToGroup',
 										self.use_behavior(GantryToGroupSM, 'GantryToGroup'),
 										transitions={'finished': 'GantryToStation', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'station_id': 'station_id'})
 
-			# x:1206 y:268
+			# x:920 y:221
 			OperatableStateMachine.add('GantryToStation',
 										self.use_behavior(GantryToStationSM, 'GantryToStation'),
 										transitions={'finished': 'unit_2_product', 'failed': 'failed'},
@@ -98,7 +98,7 @@ class ProcessOrder_unit2SM(Behavior):
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'products'})
 
-			# x:1153 y:405
+			# x:920 y:371
 			OperatableStateMachine.add('unit_2_product',
 										self.use_behavior(unit_2_productSM, 'unit_2_product'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
