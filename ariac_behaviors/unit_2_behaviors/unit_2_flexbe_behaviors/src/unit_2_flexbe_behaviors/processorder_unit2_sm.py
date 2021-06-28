@@ -10,6 +10,8 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from ariac_flexbe_states.message_state import MessageState
 from ariac_logistics_flexbe_states.get_assembly_shipment_from_order_state import GetAssemblyShipmentFromOrderState
+from ariac_support_flexbe_states.equal_state import EqualState
+from unit_2_flexbe_behaviors.gantrytogroup_sm import GantryToGroupSM
 from unit_2_flexbe_behaviors.gantrytostation_sm import GantryToStationSM
 from unit_2_flexbe_behaviors.unit_2_product_sm import unit_2_productSM
 # Additional imports can be added inside the following tags
@@ -35,6 +37,7 @@ class ProcessOrder_unit2SM(Behavior):
 		# parameters of this behavior
 
 		# references to used behaviors
+		self.add_behavior(GantryToGroupSM, 'GantryToGroup')
 		self.add_behavior(GantryToStationSM, 'GantryToStation')
 		self.add_behavior(unit_2_productSM, 'unit_2_product')
 
@@ -49,7 +52,7 @@ class ProcessOrder_unit2SM(Behavior):
 
 	def create(self):
 		table = 'ariac_unit2_tables'
-		# x:924 y:311, x:309 y:379
+		# x:1172 y:484, x:309 y:379
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['number_of_assembly_shipments', 'assembly_shipments', 'index'], output_keys=['number_of_products_2'])
 		_state_machine.userdata.message_1 = 'MSG: assembly_index recieved'
 		_state_machine.userdata.agv_id = ''
@@ -58,6 +61,7 @@ class ProcessOrder_unit2SM(Behavior):
 		_state_machine.userdata.number_of_assembly_shipments = 0
 		_state_machine.userdata.index = 0
 		_state_machine.userdata.number_of_products_2 = 0
+		_state_machine.userdata.NULL = 0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -73,26 +77,40 @@ class ProcessOrder_unit2SM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'invalid_index': Autonomy.Off},
 										remapping={'assembly_shipments': 'assembly_shipments', 'assembly_index': 'assembly_index', 'shipment_type': 'shipment_type', 'products': 'products', 'shipment_type': 'shipment_type', 'station_id': 'station_id', 'number_of_products': 'number_of_products_2'})
 
+			# x:898 y:47
+			OperatableStateMachine.add('GantryToGroup',
+										self.use_behavior(GantryToGroupSM, 'GantryToGroup'),
+										transitions={'finished': 'GantryToStation', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
+										remapping={'station_id': 'station_id'})
+
+			# x:1206 y:268
+			OperatableStateMachine.add('GantryToStation',
+										self.use_behavior(GantryToStationSM, 'GantryToStation'),
+										transitions={'finished': 'unit_2_product', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
+										remapping={'station_id': 'station_id'})
+
 			# x:393 y:24
 			OperatableStateMachine.add('msg1',
 										MessageState(),
-										transitions={'continue': 'GantryToStation'},
+										transitions={'continue': 'CheckFirstRound'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'products'})
 
-			# x:820 y:21
+			# x:1153 y:405
 			OperatableStateMachine.add('unit_2_product',
 										self.use_behavior(unit_2_productSM, 'unit_2_product'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'number_of_products_2': 'number_of_products_2', 'shipment_type': 'shipment_type', 'products': 'products', 'station_id': 'station_id', 'index': 'index'})
 
-			# x:550 y:21
-			OperatableStateMachine.add('GantryToStation',
-										self.use_behavior(GantryToStationSM, 'GantryToStation'),
-										transitions={'finished': 'unit_2_product', 'failed': 'failed'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'station_id': 'station_id', 'index': 'index'})
+			# x:618 y:28
+			OperatableStateMachine.add('CheckFirstRound',
+										EqualState(),
+										transitions={'true': 'GantryToGroup', 'false': 'GantryToStation'},
+										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
+										remapping={'value_a': 'index', 'value_b': 'NULL'})
 
 
 		return _state_machine

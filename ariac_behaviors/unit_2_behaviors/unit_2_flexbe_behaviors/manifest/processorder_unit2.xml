@@ -12,8 +12,9 @@
 
 
 	<!-- Contained Behaviors -->
-	<contains name="unit_2_product" />
+	<contains name="GantryToGroup" />
 	<contains name="GantryToStation" />
+	<contains name="unit_2_product" />
 
 	<!-- Available Parameters -->
 
