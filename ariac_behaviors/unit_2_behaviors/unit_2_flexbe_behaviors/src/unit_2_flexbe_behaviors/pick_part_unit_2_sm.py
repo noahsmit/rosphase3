@@ -132,14 +132,14 @@ class pick_part_unit_2SM(Behavior):
 			# x:318 y:21
 			OperatableStateMachine.add('LookUpCameraTopic',
 										LookupFromTableState(parameter_name=table, table_name='stations', index_title='station', column_title='camera_topic'),
-										transitions={'found': 'MsgCT', 'not_found': 'failed'},
+										transitions={'found': 'GetOffset', 'not_found': 'failed'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'station_id', 'column_value': 'camera_topic'})
 
 			# x:679 y:39
 			OperatableStateMachine.add('LookUpPick',
 										LookupFromTableState(parameter_name=table, table_name='stations', index_title='station', column_title='pick'),
-										transitions={'found': 'TextToFloatOffset', 'not_found': 'failed'},
+										transitions={'found': 'MsgCT', 'not_found': 'failed'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'index_value': 'station_id', 'column_value': 'pick'})
 
@@ -171,12 +171,12 @@ class pick_part_unit_2SM(Behavior):
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'pick', 'move_group': 'move_group', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:329 y:112
+			# x:894 y:168
 			OperatableStateMachine.add('MsgCT',
 										MessageState(),
-										transitions={'continue': 'GetOffset'},
+										transitions={'continue': 'TextToFloatOffset'},
 										autonomy={'continue': Autonomy.Off},
-										remapping={'message': 'part'})
+										remapping={'message': 'pick'})
 
 			# x:1133 y:150
 			OperatableStateMachine.add('PoseMSG',

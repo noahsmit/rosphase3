@@ -43,13 +43,15 @@ class Initialise_behaviour_unit_2SM(Behavior):
 
 
 	def create(self):
-		# x:603 y:184, x:215 y:277
+		# x:660 y:312, x:215 y:277
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 		_state_machine.userdata.namespace = '/ariac/gantry'
 		_state_machine.userdata.robot_name = ''
 		_state_machine.userdata.action_topic = '/move_group'
 		_state_machine.userdata.move_group_full = 'gantry_full'
 		_state_machine.userdata.config_name_home = 'gantry_home'
+		_state_machine.userdata.config_name_home_arm = 'gantry_arm_home'
+		_state_machine.userdata.move_group_arm = 'gantry_arm'
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -58,12 +60,12 @@ class Initialise_behaviour_unit_2SM(Behavior):
 
 
 		with _state_machine:
-			# x:348 y:99
-			OperatableStateMachine.add('Home',
+			# x:532 y:70
+			OperatableStateMachine.add('ArmHome',
 										SrdfStateToMoveitAriac(),
 										transitions={'reached': 'finished', 'planning_failed': 'failed', 'control_failed': 'failed', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
-										remapping={'config_name': 'config_name_home', 'move_group': 'move_group_full', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
+										remapping={'config_name': 'config_name_home_arm', 'move_group': 'move_group_arm', 'namespace': 'namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
 
 		return _state_machine

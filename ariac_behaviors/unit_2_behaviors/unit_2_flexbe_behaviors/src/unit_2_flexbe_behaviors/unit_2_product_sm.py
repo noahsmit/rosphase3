@@ -61,6 +61,7 @@ class unit_2_productSM(Behavior):
 		_state_machine.userdata.message_01 = 'MSG: increment added'
 		_state_machine.userdata.station_id = ''
 		_state_machine.userdata.MINUSONE = -1
+		_state_machine.userdata.index2 = 0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -90,19 +91,19 @@ class unit_2_productSM(Behavior):
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'part': 'part', 'station_id': 'station_id'})
 
-			# x:656 y:235
+			# x:593 y:318
 			OperatableStateMachine.add('unit2_place',
 										self.use_behavior(unit2_placeSM, 'unit2_place'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'pose': 'pose', 'part': 'part', 'station_id': 'station_id'})
 
-			# x:655 y:148
+			# x:625 y:180
 			OperatableStateMachine.add('GantryToStation',
 										self.use_behavior(GantryToStationSM, 'GantryToStation'),
 										transitions={'finished': 'unit2_place', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'station_id': 'station_id'})
+										remapping={'station_id': 'station_id', 'index': 'index2'})
 
 
 		return _state_machine

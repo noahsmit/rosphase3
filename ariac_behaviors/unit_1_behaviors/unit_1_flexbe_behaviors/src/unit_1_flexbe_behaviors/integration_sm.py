@@ -13,6 +13,7 @@ from ariac_flexbe_states.start_assignment_state import StartAssignment
 from ariac_logistics_flexbe_states.get_order_state import GetOrderState
 from ariac_support_flexbe_states.add_numeric_state import AddNumericState
 from ariac_support_flexbe_states.equal_state import EqualState
+from ariac_support_flexbe_states.greater_numeric_state import GreaterNumericState
 from flexbe_states.wait_state import WaitState
 from unit_1_flexbe_behaviors.agvhandler_sm import AGVHandlerSM
 from unit_1_flexbe_behaviors.unit1handler_sm import Unit1HandlerSM
@@ -56,12 +57,14 @@ class IntegrationSM(Behavior):
 
 
 	def create(self):
-		# x:144 y:668, x:558 y:317
+		# x:1539 y:652, x:558 y:317
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 		_state_machine.userdata.index = 0
 		_state_machine.userdata.ONE = 1
 		_state_machine.userdata.MINUSONE = -1
 		_state_machine.userdata.number_of_products_1 = 0
+		_state_machine.userdata.index2 = 0
+		_state_machine.userdata.result2 = 0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -76,70 +79,105 @@ class IntegrationSM(Behavior):
 										transitions={'continue': 'Wait'},
 										autonomy={'continue': Autonomy.Off})
 
-			# x:739 y:365
+			# x:1141 y:287
 			OperatableStateMachine.add('Add1',
 										AddNumericState(),
-										transitions={'done': 'Unit1Handler'},
+										transitions={'done': 'Add1_2_2'},
 										autonomy={'done': Autonomy.Off},
 										remapping={'value_a': 'index', 'value_b': 'ONE', 'result': 'index'})
 
-			# x:1180 y:438
+			# x:1165 y:161
+			OperatableStateMachine.add('Add1_2',
+										AddNumericState(),
+										transitions={'done': 'unit_2_behaviour_v1'},
+										autonomy={'done': Autonomy.Off},
+										remapping={'value_a': 'index2', 'value_b': 'ONE', 'result': 'index2'})
+
+			# x:823 y:290
+			OperatableStateMachine.add('Add1_2_2',
+										AddNumericState(),
+										transitions={'done': 'GreaterThanNOF'},
+										autonomy={'done': Autonomy.Off},
+										remapping={'value_a': 'index2', 'value_b': 'ONE', 'result': 'index2'})
+
+			# x:1398 y:213
 			OperatableStateMachine.add('CheckEqual',
 										EqualState(),
-										transitions={'true': 'AGVHandler1', 'false': 'Add1'},
+										transitions={'true': 'CheckEqual_2', 'false': 'Add1'},
 										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
 										remapping={'value_a': 'index', 'value_b': 'result'})
 
-			# x:224 y:661
+			# x:1398 y:293
+			OperatableStateMachine.add('CheckEqual_2',
+										EqualState(),
+										transitions={'true': 'End', 'false': 'Add1_2'},
+										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
+										remapping={'value_a': 'index2', 'value_b': 'result2'})
+
+			# x:1546 y:523
 			OperatableStateMachine.add('End',
 										EndAssignment(),
 										transitions={'continue': 'finished'},
 										autonomy={'continue': Autonomy.Off})
 
-			# x:564 y:20
+			# x:253 y:99
 			OperatableStateMachine.add('GetOrder',
 										GetOrderState(),
-										transitions={'order_found': 'Unit1Handler', 'no_order_found': 'failed'},
+										transitions={'order_found': 'GreaterThanNOF', 'no_order_found': 'failed'},
 										autonomy={'order_found': Autonomy.Off, 'no_order_found': Autonomy.Off},
 										remapping={'order_id': 'order_id', 'kitting_shipments': 'kitting_shipments', 'number_of_kitting_shipments': 'number_of_kitting_shipments', 'assembly_shipments': 'assembly_shipments', 'number_of_assembly_shipments': 'number_of_assembly_shipments'})
 
-			# x:158 y:297
+			# x:853 y:29
+			OperatableStateMachine.add('GreaterThanNOF',
+										GreaterNumericState(),
+										transitions={'true': 'End', 'false': 'unit_2_behaviour_v1'},
+										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
+										remapping={'value_a': 'index2', 'value_b': 'result2'})
+
+			# x:49 y:423
 			OperatableStateMachine.add('Initialise_behaviour_unit_2',
 										self.use_behavior(Initialise_behaviour_unit_2SM, 'Initialise_behaviour_unit_2'),
 										transitions={'finished': 'GetOrder', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:1201 y:175
+			# x:1401 y:36
 			OperatableStateMachine.add('NOP-1',
 										AddNumericState(),
-										transitions={'done': 'CheckEqual'},
+										transitions={'done': 'NOP-1_2'},
 										autonomy={'done': Autonomy.Off},
 										remapping={'value_a': 'number_of_products_1', 'value_b': 'MINUSONE', 'result': 'result'})
 
-			# x:597 y:116
+			# x:1395 y:120
+			OperatableStateMachine.add('NOP-1_2',
+										AddNumericState(),
+										transitions={'done': 'CheckEqual'},
+										autonomy={'done': Autonomy.Off},
+										remapping={'value_a': 'number_of_products_2', 'value_b': 'MINUSONE', 'result': 'result2'})
+
+			# x:574 y:36
 			OperatableStateMachine.add('Unit1Handler',
 										self.use_behavior(Unit1HandlerSM, 'Unit1Handler'),
-										transitions={'finished': 'unit_2_behaviour_v1', 'failed': 'failed'},
+										transitions={'finished': 'Unit1Handler', 'failed': 'Unit1Handler'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'index': 'index', 'order_id': 'order_id', 'kitting_shipments': 'kitting_shipments', 'number_of_kitting_shipments': 'number_of_kitting_shipments', 'agv_id': 'agv_id1', 'station_id': 'station_id1', 'shipment_type': 'shipment_type1', 'number_of_products': 'number_of_products_1'})
 
-			# x:233 y:20
+			# x:117 y:191
 			OperatableStateMachine.add('Wait',
 										WaitState(wait_time=0.5),
 										transitions={'done': 'Initialise_behaviour_unit_2'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:1030 y:71
+			# x:1100 y:50
 			OperatableStateMachine.add('unit_2_behaviour_v1',
 										self.use_behavior(unit_2_behaviour_v1SM, 'unit_2_behaviour_v1'),
 										transitions={'finished': 'NOP-1', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'order_id': 'order_id', 'assembly_shipments': 'assembly_shipments', 'number_of_assembly_shipments': 'number_of_assembly_shipments', 'index': 'index', 'number_of_products_2': 'number_of_products_2'})
 
-			# x:415 y:660
+			# x:1183 y:551
 			OperatableStateMachine.add('AGVHandler1',
 										self.use_behavior(AGVHandlerSM, 'AGVHandler1'),
-										transitions={'finished': 'End', 'failed': 'failed'},
+										transitions={'finished': 'AGVHandler1', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'shipment_type': 'shipment_type1', 'agv_id': 'agv_id1', 'assembly_station_name': 'station_id1'})
 
