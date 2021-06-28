@@ -48,11 +48,11 @@ class ProductsHandlerSM(Behavior):
 
 	def create(self):
 		# x:783 y:386, x:130 y:365
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['shipment_type', 'products', 'agv_id', 'number_of_products', 'index'])
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['shipment_type', 'products', 'agv_id', 'number_of_products_1', 'index'])
 		_state_machine.userdata.products = []
 		_state_machine.userdata.agv_id = ''
 		_state_machine.userdata.station_id = ''
-		_state_machine.userdata.number_of_products = 0
+		_state_machine.userdata.number_of_products_1 = 0
 		_state_machine.userdata.shipment_type = ''
 		_state_machine.userdata.index = 0
 		_state_machine.userdata.ONE = 1

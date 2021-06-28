@@ -14,7 +14,6 @@
 	<!-- Contained Behaviors -->
 	<contains name="Initialise_behaviour_unit_2" />
 	<contains name="Unit1Handler" />
-	<contains name="Unit1_initialize" />
 	<contains name="unit_2_behaviour_v1" />
 	<contains name="AGVHandler" />
 

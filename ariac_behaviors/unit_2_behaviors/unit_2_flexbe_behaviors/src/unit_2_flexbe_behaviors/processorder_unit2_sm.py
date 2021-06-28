@@ -50,13 +50,14 @@ class ProcessOrder_unit2SM(Behavior):
 	def create(self):
 		table = 'ariac_unit2_tables'
 		# x:924 y:311, x:309 y:379
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['number_of_assembly_shipments', 'assembly_shipments', 'index'])
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['number_of_assembly_shipments', 'assembly_shipments', 'index'], output_keys=['number_of_products_2'])
 		_state_machine.userdata.message_1 = 'MSG: assembly_index recieved'
 		_state_machine.userdata.agv_id = ''
 		_state_machine.userdata.assembly_index = 0
 		_state_machine.userdata.assembly_shipments = []
 		_state_machine.userdata.number_of_assembly_shipments = 0
 		_state_machine.userdata.index = 0
+		_state_machine.userdata.number_of_products_2 = 0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -70,7 +71,7 @@ class ProcessOrder_unit2SM(Behavior):
 										GetAssemblyShipmentFromOrderState(),
 										transitions={'continue': 'msg1', 'invalid_index': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'invalid_index': Autonomy.Off},
-										remapping={'assembly_shipments': 'assembly_shipments', 'assembly_index': 'assembly_index', 'shipment_type': 'shipment_type', 'products': 'products', 'shipment_type': 'shipment_type', 'station_id': 'station_id', 'number_of_products': 'number_of_products'})
+										remapping={'assembly_shipments': 'assembly_shipments', 'assembly_index': 'assembly_index', 'shipment_type': 'shipment_type', 'products': 'products', 'shipment_type': 'shipment_type', 'station_id': 'station_id', 'number_of_products': 'number_of_products_2'})
 
 			# x:393 y:24
 			OperatableStateMachine.add('msg1',
@@ -84,14 +85,14 @@ class ProcessOrder_unit2SM(Behavior):
 										self.use_behavior(unit_2_productSM, 'unit_2_product'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'number_of_products': 'number_of_products', 'shipment_type': 'shipment_type', 'products': 'products', 'station_id': 'station_id', 'index': 'index'})
+										remapping={'number_of_products_2': 'number_of_products_2', 'shipment_type': 'shipment_type', 'products': 'products', 'station_id': 'station_id', 'index': 'index'})
 
 			# x:550 y:21
 			OperatableStateMachine.add('GantryToStation',
 										self.use_behavior(GantryToStationSM, 'GantryToStation'),
 										transitions={'finished': 'unit_2_product', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'station_id': 'station_id'})
+										remapping={'station_id': 'station_id', 'index': 'index'})
 
 
 		return _state_machine

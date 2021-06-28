@@ -46,7 +46,7 @@ class KittingHandlerSM(Behavior):
 
 	def create(self):
 		# x:802 y:644, x:382 y:454
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['kitting_shipments', 'number_of_kitting_shipments', 'index'], output_keys=['agv_id', 'station_id', 'shipment_type'])
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['kitting_shipments', 'number_of_kitting_shipments', 'index'], output_keys=['agv_id', 'station_id', 'shipment_type', 'number_of_products_1'])
 		_state_machine.userdata.kitting_index = 0
 		_state_machine.userdata.kitting_shipments = []
 		_state_machine.userdata.ONE = 1
@@ -56,6 +56,7 @@ class KittingHandlerSM(Behavior):
 		_state_machine.userdata.agv_id = 0
 		_state_machine.userdata.station_id = ''
 		_state_machine.userdata.shipment_type = ''
+		_state_machine.userdata.number_of_products_1 = 0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -69,14 +70,14 @@ class KittingHandlerSM(Behavior):
 										GetKittingShipmentFromOrderState(),
 										transitions={'continue': 'ProductsHandler', 'invalid_index': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'invalid_index': Autonomy.Off},
-										remapping={'kitting_shipments': 'kitting_shipments', 'kitting_index': 'kitting_index', 'shipment_type': 'shipment_type', 'products': 'products', 'agv_id': 'agv_id', 'station_id': 'station_id', 'number_of_products': 'number_of_products'})
+										remapping={'kitting_shipments': 'kitting_shipments', 'kitting_index': 'kitting_index', 'shipment_type': 'shipment_type', 'products': 'products', 'agv_id': 'agv_id', 'station_id': 'station_id', 'number_of_products': 'number_of_products_1'})
 
 			# x:470 y:71
 			OperatableStateMachine.add('ProductsHandler',
 										self.use_behavior(ProductsHandlerSM, 'ProductsHandler'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'shipment_type': 'shipment_type', 'products': 'products', 'agv_id': 'agv_id', 'number_of_products': 'number_of_products', 'index': 'index'})
+										remapping={'shipment_type': 'shipment_type', 'products': 'products', 'agv_id': 'agv_id', 'number_of_products': 'number_of_products_1', 'index': 'index'})
 
 
 		return _state_machine

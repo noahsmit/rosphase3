@@ -13,7 +13,6 @@
 
 	<!-- Contained Behaviors -->
 	<contains name="ProcessOrder_unit2" />
-	<contains name="Unit2 Test Positions" />
 
 	<!-- Available Parameters -->
 

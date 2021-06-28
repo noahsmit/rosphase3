@@ -26,10 +26,19 @@
 	    <part name="assembly_battery_blue">
 		    <offset value="0.044" />
 	    </part>
+	    <part name="assembly_battery_red">
+		    <offset value="0.044" />
+	    </part>
 	    <part name="assembly_regulator_red">
 		    <offset value="0.05" />
 	    </part>
+	    <part name="assembly_regulator_blue">
+		    <offset value="0.05" />
+	    </part>
 	    <part name="assembly_sensor_blue">
+		    <offset value="0.04" />
+	    </part>
+	    <part name="assembly_sensor_green">
 		    <offset value="0.04" />
 	    </part>
     </table>

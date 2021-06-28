@@ -51,8 +51,8 @@ class unit_2_productSM(Behavior):
 
 	def create(self):
 		# x:836 y:480, x:450 y:206
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['number_of_products', 'shipment_type', 'products', 'station_id', 'index'])
-		_state_machine.userdata.number_of_products = 0
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['number_of_products_2', 'shipment_type', 'products', 'station_id', 'index'])
+		_state_machine.userdata.number_of_products_2 = 0
 		_state_machine.userdata.station_id = ''
 		_state_machine.userdata.shipment_type = ''
 		_state_machine.userdata.products = []

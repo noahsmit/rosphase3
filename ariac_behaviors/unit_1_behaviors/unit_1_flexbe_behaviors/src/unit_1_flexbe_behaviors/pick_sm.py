@@ -71,6 +71,7 @@ class PickSM(Behavior):
 		_state_machine.userdata.tool_link = 'ee_link'
 		_state_machine.userdata.rotation = 0
 		_state_machine.userdata.TRUE = True
+		_state_machine.userdata.ONE = 1
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -79,10 +80,10 @@ class PickSM(Behavior):
 
 
 		with _state_machine:
-			# x:73 y:24
+			# x:51 y:25
 			OperatableStateMachine.add('GetLocation',
 										GetMaterialLocationsState(),
-										transitions={'continue': 'GetItemFromList'},
+										transitions={'continue': 'MessagePart'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'part': 'part', 'location_type': 'location_type', 'material_locations': 'material_locations'})
 
@@ -100,12 +101,12 @@ class PickSM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'ref_frame': 'ref_frame', 'camera_topic': 'camera_topic', 'camera_frame': 'camera_frame', 'part': 'part', 'pose': 'pose'})
 
-			# x:88 y:168
+			# x:209 y:113
 			OperatableStateMachine.add('GetItemFromList',
 										GetItemFromListState(),
 										transitions={'done': 'MessageBin', 'invalid_index': 'failed'},
 										autonomy={'done': Autonomy.Off, 'invalid_index': Autonomy.Off},
-										remapping={'list': 'material_locations', 'index': 'index', 'item': 'bin'})
+										remapping={'list': 'material_locations', 'index': 'ONE', 'item': 'bin'})
 
 			# x:1011 y:516
 			OperatableStateMachine.add('GripperOn',
@@ -154,6 +155,20 @@ class PickSM(Behavior):
 										transitions={'continue': 'LookUpCameraTopic'},
 										autonomy={'continue': Autonomy.Off},
 										remapping={'message': 'bin'})
+
+			# x:245 y:228
+			OperatableStateMachine.add('MessageLoc',
+										MessageState(),
+										transitions={'continue': 'GetItemFromList'},
+										autonomy={'continue': Autonomy.Off},
+										remapping={'message': 'material_locations'})
+
+			# x:80 y:248
+			OperatableStateMachine.add('MessagePart',
+										MessageState(),
+										transitions={'continue': 'MessageLoc'},
+										autonomy={'continue': Autonomy.Off},
+										remapping={'message': 'part'})
 
 			# x:1043 y:324
 			OperatableStateMachine.add('MessagePose',
